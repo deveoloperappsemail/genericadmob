@@ -16,6 +16,7 @@ import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
+import com.example.allnetworkads.AdsCounter
 import com.example.allnetworkads.R
 import com.example.allnetworkads.admob.AdmobAds
 import com.example.allnetworkads.adslib.Constants
@@ -147,45 +148,57 @@ class AppLovinAds {
         }
 
         fun showAd(context: Context, activity: Activity, intent: Intent, isFinish: Boolean) {
-            interstitialAd.setListener( object: MaxAdListener {
-                override fun onAdLoaded(ad: MaxAd?) {
-                    // Interstitial ad is ready to be shown. interstitialAd.isReady() will now return 'true'
-                    // Reset retry attempt
-                    retryAttempt = 0.0
-                }
+            if (AdsCounter.isShowAd(context)) {
+                interstitialAd.setListener(object : MaxAdListener {
+                    override fun onAdLoaded(ad: MaxAd?) {
+                        // Interstitial ad is ready to be shown. interstitialAd.isReady() will now return 'true'
+                        // Reset retry attempt
+                        retryAttempt = 0.0
+                    }
 
-                override fun onAdDisplayed(ad: MaxAd?) {}
-                override fun onAdClicked(ad: MaxAd?) {}
+                    override fun onAdDisplayed(ad: MaxAd?) {}
+                    override fun onAdClicked(ad: MaxAd?) {}
 
-                override fun onAdHidden(ad: MaxAd?) {
-                    // Interstitial ad is hidden. Pre-load the next ad
-                    interstitialAd.loadAd()
+                    override fun onAdHidden(ad: MaxAd?) {
+                        // Interstitial ad is hidden. Pre-load the next ad
+                        interstitialAd.loadAd()
+                        context.startActivity(intent)
+                        if (isFinish) {
+                            activity.finish()
+                        }
+                    }
+
+                    override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                        // Interstitial ad failed to load
+                        // AppLovin recommends that you retry with exponentially higher delays up to a maximum delay (in this case 64 seconds)
+
+                        retryAttempt++
+                        val delayMillis = TimeUnit.SECONDS.toMillis(
+                            2.0.pow(
+                                6.0.coerceAtMost(
+                                    retryAttempt
+                                )
+                            ).toLong()
+                        )
+
+                        Handler().postDelayed({ interstitialAd.loadAd() }, delayMillis)
+                    }
+
+                    override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                        // Interstitial ad failed to display. AppLovin recommends that you load the next ad.
+                        interstitialAd.loadAd()
+                    }
+                })
+
+                if (interstitialAd.isReady)
+                    interstitialAd.showAd()
+                else {
                     context.startActivity(intent)
                     if (isFinish) {
                         activity.finish()
                     }
                 }
-
-                override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                    // Interstitial ad failed to load
-                    // AppLovin recommends that you retry with exponentially higher delays up to a maximum delay (in this case 64 seconds)
-
-                    retryAttempt++
-                    val delayMillis = TimeUnit.SECONDS.toMillis( 2.0.pow(6.0.coerceAtMost(
-                        retryAttempt
-                    )).toLong() )
-
-                    Handler().postDelayed( { interstitialAd.loadAd() }, delayMillis )
-                }
-
-                override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                    // Interstitial ad failed to display. AppLovin recommends that you load the next ad.
-                    interstitialAd.loadAd()
-                }
-            } )
-
-            if (interstitialAd.isReady )
-                interstitialAd.showAd()
+            }
             else {
                 context.startActivity(intent)
                 if (isFinish) {
