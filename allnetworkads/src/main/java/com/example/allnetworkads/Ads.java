@@ -23,8 +23,12 @@ public class Ads {
             else
                 AdmobAds.refreshAd(context, activity, appName, pkgName, isSmallAd, nativeTheme);
         }
-        else
-            AppLovinAds.Companion.loadNativeAd(context, activity, appName, pkgName, isSmallAd);
+        else {
+            if(isFragment)
+                AppLovinAds.Companion.loadFragmentNativeAd(context, view, appName, pkgName, isSmallAd);
+            else
+                AppLovinAds.Companion.loadNativeAd(context, activity, appName, pkgName, isSmallAd);
+        }
     }
 
     public static void loadInter(Context context, Activity activity) {
@@ -40,6 +44,6 @@ public class Ads {
         if(showAdmob)
             AdmobAds.RedirectActivity(activity, intent, isFinish);
         else
-            AppLovinAds.Companion.showAd(context, intent);
+            AppLovinAds.Companion.showAd(context, intent, isFinish);
     }
 }

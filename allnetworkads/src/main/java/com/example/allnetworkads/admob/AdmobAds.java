@@ -257,7 +257,7 @@ public class AdmobAds {
     }
 
     private static int getNativeLayout(boolean isSmallAd, int nativeThemeColor) {
-        int layout;
+        int layout = R.layout.ad_unified_white;
 
         if(nativeThemeColor == ENUMS.BLACK) {
             if (isSmallAd) {
@@ -266,7 +266,7 @@ public class AdmobAds {
                 layout = R.layout.ad_unified_black;
             }
         }
-        else {
+        else if(nativeThemeColor == ENUMS.WHITE){
             if (isSmallAd) {
                 layout = R.layout.ad_unified_white_small;
             } else {
@@ -355,6 +355,86 @@ public class AdmobAds {
 
 
     }
+
+    public static void showFragmentInHouseAds(Context context, View view, String appName, String pkgName, boolean isSmallAd) {
+
+        MaterialTextView adsTitle = view.findViewById(R.id.adsTitle);
+        MaterialTextView adsSubTitle = view.findViewById(R.id.adsSubTitle);
+        MaterialTextView adsTitleSmall = view.findViewById(R.id.adsTitleSmall);
+        MaterialTextView adsRating = view.findViewById(R.id.adsRating);
+        ImageView icon = view.findViewById(R.id.iconAds);
+        ImageView featureGraphic = view.findViewById(R.id.blurImage);
+        Button installBtn = view.findViewById(R.id.installBtn);
+        VideoView ad_mediaVideo = view.findViewById(R.id.ad_mediaVideo);
+
+        adsSubTitle.setSelected(true);
+
+        String packageName = "";
+        try {
+            String iconURL = InHouseAds.getModelAdsList().get(0).getAdsIcon();
+            String featureGraphicURL = InHouseAds.getModelAdsList().get(0).getAdsImage();
+            String videoURL = InHouseAds.getModelAdsList().get(0).getAdsVideo();
+            packageName = InHouseAds.getModelAdsList().get(0).getAppPackage();
+            boolean isVideoAvailable = InHouseAds.getModelAdsList().get(0).isVideo();
+
+            adsTitle.setText(   InHouseAds.getModelAdsList().get(0).getAdsTitle()); // title
+            adsSubTitle.setText(InHouseAds.getModelAdsList().get(0).getAdsSubText());
+            adsTitleSmall.setText(InHouseAds.getModelAdsList().get(0).getAdsTitle());
+            adsRating.setText(InHouseAds.getModelAdsList().get(0).getAdsRating());
+
+            Glide.with(context)
+                    .load(iconURL)
+                    .into( icon );
+
+            if (isVideoAvailable) {
+                ad_mediaVideo.setVisibility(View.VISIBLE);
+                featureGraphic.setVisibility(View.GONE);
+
+                Uri video = Uri.parse(videoURL);
+                ad_mediaVideo.setVideoURI(video);
+                ad_mediaVideo.start();
+                ad_mediaVideo.setOnCompletionListener(mediaPlayer -> {
+                    Log.d("TAG", "showInHouseAds: ");
+                    ad_mediaVideo.start();
+                });
+
+            } else {
+                ad_mediaVideo.setVisibility(View.GONE);
+                featureGraphic.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(featureGraphicURL)
+                        .into( featureGraphic );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        if(isSmallAd){
+            ad_mediaVideo.setVisibility(View.GONE);
+            featureGraphic.setVisibility(View.GONE);
+        }
+        String finalPackageName = packageName;
+        installBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + finalPackageName)));
+                } catch (Exception e) {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + finalPackageName)));
+                }
+
+                try {
+                    AdsClick.onAdClick(context, appName, pkgName,finalPackageName, Constants.NATIVE_AD );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+    }
+
 
     private static void populateNativeAdView(NativeAd nativeAd, NativeAdView adView, boolean isSmallAd) {
         // Set the media view.
@@ -569,7 +649,7 @@ public class AdmobAds {
 
                                         try {
                                             if (InHouseAds.getModelAdsList().size() > 0) {
-                                                showInHouseAds(context, activity, appName, pkgName, isSmallAd);
+                                                showFragmentInHouseAds(context, view, appName, pkgName, isSmallAd);
                                                 nativeAds.setVisibility(View.GONE);
                                                 AdsAreaEmpty.setVisibility(View.GONE);
                                                 inHouseAdArea.setVisibility(View.VISIBLE);
