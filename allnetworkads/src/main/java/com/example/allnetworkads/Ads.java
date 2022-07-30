@@ -18,32 +18,40 @@ public class Ads {
                                   boolean isFragment) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
         if(showAdmob) {
-            if(isFragment)
+            if(isFragment) {
                 AdmobAds.refreshFragmentAd(context, activity, view, appName, pkgName, isSmallAd, nativeTheme);
-            else
+            }
+            else {
                 AdmobAds.refreshAd(context, activity, appName, pkgName, isSmallAd, nativeTheme);
+            }
         }
         else {
-            if(isFragment)
+            if(isFragment) {
                 AppLovinAds.Companion.loadFragmentNativeAd(context, view, appName, pkgName, isSmallAd);
-            else
+            }
+            else {
                 AppLovinAds.Companion.loadNativeAd(context, activity, appName, pkgName, isSmallAd);
+            }
         }
     }
 
     public static void loadInter(Context context, Activity activity) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
-        if(showAdmob)
+        if(showAdmob) {
             AdmobAds.loadAdmobInters(context);
-        else
+        }
+        else {
             AppLovinAds.Companion.loadInterstitialAd(context, activity);
+        }
     }
 
     public static void showInter(Context context, Activity activity, Intent intent, boolean isFinish) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
-        if(showAdmob)
+        if(showAdmob) {
             AdmobAds.RedirectActivity(activity, intent, isFinish);
-        else
+        }
+        else {
             AppLovinAds.Companion.showAd(context, activity, intent, isFinish);
+        }
     }
 }
