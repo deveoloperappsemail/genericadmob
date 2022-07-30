@@ -44,6 +44,6 @@ public class Ads {
         if(showAdmob)
             AdmobAds.RedirectActivity(activity, intent, isFinish);
         else
-            AppLovinAds.Companion.showAd(context, intent, isFinish);
+            AppLovinAds.Companion.showAd(context, activity, intent, isFinish);
     }
 }
