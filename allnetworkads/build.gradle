@@ -40,11 +40,11 @@ dependencies {
 
     implementation 'com.android.volley:volley:1.2.1'
 
-    implementation 'com.google.android.gms:play-services-ads:21.1.0'
-    //implementation 'com.google.ads.mediation:facebook:6.11.0.1'
+    //implementation 'com.google.android.gms:play-services-ads:21.1.0'
+    implementation 'com.google.ads.mediation:facebook:6.11.0.1'
 
     implementation("com.applovin:applovin-sdk:11.4.4")
-    //  implementation 'com.applovin.mediation:facebook-adapter:6.11.0.5'
+    implementation 'com.applovin.mediation:facebook-adapter:6.11.0.5'
 
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
