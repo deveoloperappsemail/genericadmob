@@ -3,7 +3,24 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/drawable/ic_baseline_star_rate_24.xml" value="0.1205" />
         <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ad_unified.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ad_unified_black.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ad_unified_black_small.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ad_unified_white.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ad_unified_white_small.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/admob_native_frame_black.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/admob_native_frame_small_black.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/admob_native_frame_small_white.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/admob_native_frame_white.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ads_area_black_layout.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ads_area_layout_black_small.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ads_area_layout_white_small.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ads_area_white_layout.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/in_house_layout_black.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/in_house_layout_black_small.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/in_house_layout_white.xml" value="0.1921875" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/in_house_layout_white_small.xml" value="0.1921875" />
         <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/app/src/main/res/layout/activity_main.xml" value="0.1921875" />
       </map>
     </option>

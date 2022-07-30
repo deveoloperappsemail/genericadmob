@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.util.Log
+import android.view.View
 import android.widget.FrameLayout
+import android.widget.LinearLayout
+import androidx.appcompat.widget.LinearLayoutCompat
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdListener
 import com.applovin.mediation.MaxError
@@ -13,7 +16,10 @@ import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
+import com.example.allnetworkads.R
+import com.example.allnetworkads.admob.AdmobAds
 import com.example.allnetworkads.adslib.Constants
+import com.example.allnetworkads.adslib.InHouseAds
 import com.example.allnetworkads.adslib.SharedPrefUtils
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
@@ -28,7 +34,14 @@ class AppLovinAds {
 
        // private lateinit var nativeAdLayout: FrameLayout
 
-        fun loadNativeAd(context: Context, nativeAdLayout: FrameLayout) {
+        fun loadNativeAd(context: Context, activity: Activity,  appName: String,
+                         pkgName: String,  isSmallAd: Boolean) {
+            //val nativeAdLayout: FrameLayout = activity.findViewById(R.id.fl_adplaceholder)
+
+            val nativeAds = activity.findViewById<FrameLayout>(R.id.fl_adplaceholder)
+            val AdsAreaEmpty = activity.findViewById<LinearLayout>(R.id.ads_area_empty)
+            val inHouseAdArea: LinearLayoutCompat = activity.findViewById(R.id.inHouseAd)
+
            // nativeAdLayout = findViewById(R.id.native_ad_layout)
             val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
             Log.i("MyLog", "adid: "+adId)
@@ -44,85 +57,34 @@ class AppLovinAds {
                     nativeAd = ad
 
                     // Add ad view to view.
-                    nativeAdLayout.removeAllViews()
-                    nativeAdLayout.addView(nativeAdView)
+                    nativeAds.removeAllViews()
+                    nativeAds.addView(nativeAdView)
+
+                    //correct
+
+                    //correct
+                    nativeAds.visibility = View.VISIBLE
+                    inHouseAdArea.visibility = View.GONE
+                    AdsAreaEmpty.visibility = View.GONE
+
                 }
 
-                override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {}
+                override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                    if (InHouseAds.getModelAdsList().size > 0) {
+                        AdmobAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd)
+                        nativeAds.visibility = View.GONE
+                        AdsAreaEmpty.visibility = View.GONE
+                        inHouseAdArea.visibility = View.VISIBLE
+                    } else {
+                        nativeAds.visibility = View.GONE
+                        inHouseAdArea.visibility = View.GONE
+                        AdsAreaEmpty.visibility = View.VISIBLE
+                    }
+                }
                 override fun onNativeAdClicked(ad: MaxAd) {}
             })
             nativeAdLoader.loadAd()
         }
-
-        /*private lateinit var nativeAdLoader: MaxNativeAdLoader
-        private lateinit var nativeAdView: MaxNativeAdView
-        private lateinit var nativeAdLayout: FrameLayout
-        private var nativeAd: MaxAd? = null
-
-        fun loadNativeAd() {
-            nativeAdLayout = findViewById(R.id.native_ad_layout)
-            //setupCallbacksRecyclerView()
-
-            val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder.Builder(R.layout.native_custom_layout)
-                .setTitleTextViewId(R.id.title_text_view)
-                .setBodyTextViewId(R.id.body_text_view)
-                .setAdvertiserTextViewId(R.id.advertiser_textView)
-                .setIconImageViewId(R.id.icon_image_view)
-                .setMediaContentViewGroupId(R.id.media_view_container)
-                .setOptionsContentViewGroupId(R.id.ad_options_view)
-                .setCallToActionButtonId(R.id.cta_button)
-                .build()
-            nativeAdView = MaxNativeAdView(binder, this)
-
-            nativeAdLoader = MaxNativeAdLoader(getString(R.string.native_test_id), this)
-            nativeAdLoader.setRevenueListener(object : MaxAdRevenueListener {
-                override fun onAdRevenuePaid(ad: MaxAd?) {
-    //                val adjustAdRevenue = AdjustAdRevenue(AdjustConfig.AD_REVENUE_APPLOVIN_MAX)
-    //                adjustAdRevenue.setRevenue(ad?.revenue, "USD")
-    //                adjustAdRevenue.setAdRevenueNetwork(ad?.networkName)
-    //                adjustAdRevenue.setAdRevenueUnit(ad?.adUnitId)
-    //                adjustAdRevenue.setAdRevenuePlacement(ad?.placement)
-    //
-    //                Adjust.trackAdRevenue(adjustAdRevenue)
-                }
-            })
-            nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
-                override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
-
-                    // Cleanup any pre-existing native ad to prevent memory leaks.
-                    if (nativeAd != null) {
-                        nativeAdLoader.destroy(nativeAd)
-                    }
-
-                    // Save ad for cleanup.
-                    nativeAd = ad
-
-                    // Add ad view to view.
-                    nativeAdLayout.removeAllViews()
-                    nativeAdLayout.addView(nativeAdView)
-                }
-
-                override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {}
-                override fun onNativeAdClicked(ad: MaxAd) {}
-            })
-        }
-
-        override fun onDestroy() {
-            // Must destroy native ad or else there will be memory leaks.
-            if (nativeAd != null) {
-                // Call destroy on the native ad from any native ad loader.
-                nativeAdLoader.destroy(nativeAd)
-            }
-
-            // Destroy the actual loader itself
-            nativeAdLoader.destroy()
-
-            super.onDestroy()
-        }
-
-        fun showAd() {
-            nativeAdLoader.loadAd(nativeAdView)
-        }*/
 
         fun loadInterstitialAd(context: Context, activity: Activity) {
             val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_INTER)

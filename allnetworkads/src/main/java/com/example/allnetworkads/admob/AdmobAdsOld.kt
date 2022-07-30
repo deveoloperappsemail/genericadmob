@@ -18,9 +18,9 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.example.allnetworkads.R
 
-
-class AdmobAds {
+class AdmobAdsOld {
     companion object {
+
         var mInterstitialAd: InterstitialAd? = null
         private var nativeAd1: NativeAd? = null
 
@@ -166,10 +166,7 @@ class AdmobAds {
             }
         }
 
-        /**
-         * Creates a request for a new native ad based on the boolean parameters and calls the
-         * corresponding "populate" method when one is successfully returned.
-         */
+
         @SuppressLint("InflateParams")
         fun refreshAd(
             context: Context,
