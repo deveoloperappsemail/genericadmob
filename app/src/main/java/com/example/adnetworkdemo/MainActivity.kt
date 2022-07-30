@@ -22,13 +22,12 @@ class MainActivity : AppCompatActivity() {
 
         /*to show admob ads save true
         to show applovin ads save false*/
-        val showAdmob = false
-        TestAds.getTestAds(this, showAdmob, packageName)
+        TestAds.getTestAds(this, ENUMS.APPLOVIN, packageName)
 
         //LiveAds.getLiveAds(this, packageName)
 
         Ads.loadNative(this, this, null, getString(R.string.app_name), packageName,
-            false, ENUMS.WHITE, false)
+            ENUMS.LARGE_ADS, ENUMS.WHITE, false)
 
         Ads.loadInter(this, this)
 

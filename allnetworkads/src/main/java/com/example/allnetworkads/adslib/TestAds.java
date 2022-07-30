@@ -8,6 +8,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.allnetworkads.R;
+import com.example.allnetworkads.admob.ENUMS;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,17 +17,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestAds {
-    public static void getTestAds(Context context, boolean showAdmob, String packageName) {
+    public static void getTestAds(Context context, int showAdmob, String packageName) {
         if (InternetConnection.checkConnection(context)) {
-            if(showAdmob)
+            if(showAdmob == ENUMS.ADMOB) {
                 fetchData(context);
-            else
+                SharedPrefUtils.saveData(context, Constants.SHOW_ADMOB, true);
+            }
+            else if(showAdmob == ENUMS.APPLOVIN){
                 fetchApplovin(context, packageName);
+                SharedPrefUtils.saveData(context, Constants.SHOW_ADMOB, false);
+            }
         } else {
             storeAds(context);
         }
-
-        SharedPrefUtils.saveData(context, Constants.SHOW_ADMOB, showAdmob);
     }
 
     private static void storeAds(Context context) {

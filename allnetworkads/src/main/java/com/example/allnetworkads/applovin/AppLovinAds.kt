@@ -35,7 +35,7 @@ class AppLovinAds {
        // private lateinit var nativeAdLayout: FrameLayout
 
         fun loadNativeAd(context: Context, activity: Activity,  appName: String,
-                         pkgName: String,  isSmallAd: Boolean) {
+                         pkgName: String,  isSmallAd: Int) {
             //val nativeAdLayout: FrameLayout = activity.findViewById(R.id.fl_adplaceholder)
 
             val nativeAds = activity.findViewById<FrameLayout>(R.id.fl_adplaceholder)
@@ -87,7 +87,7 @@ class AppLovinAds {
         }
 
         fun loadFragmentNativeAd(context: Context, view: View,  appName: String,
-                         pkgName: String,  isSmallAd: Boolean) {
+                         pkgName: String,  isSmallAd: Int) {
             //val nativeAdLayout: FrameLayout = activity.findViewById(R.id.fl_adplaceholder)
 
             val nativeAds = view.findViewById<FrameLayout>(R.id.fl_adplaceholder)
@@ -192,6 +192,7 @@ class AppLovinAds {
                     activity.finish()
                 }
             }
+
         }
     }
 }

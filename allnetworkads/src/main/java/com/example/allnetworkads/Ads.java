@@ -14,7 +14,7 @@ import com.example.allnetworkads.applovin.AppLovinAds;
 public class Ads {
 
     public static void loadNative(Context context, Activity activity, View view, String appName,
-                                  String pkgName, boolean isSmallAd, int nativeTheme,
+                                  String pkgName, int isSmallAd, int nativeTheme,
                                   boolean isFragment) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
         if(showAdmob) {

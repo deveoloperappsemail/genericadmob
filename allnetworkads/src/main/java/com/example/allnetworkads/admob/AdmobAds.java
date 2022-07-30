@@ -164,7 +164,7 @@ public class AdmobAds {
      */
     @SuppressLint("MissingPermission")
     public static void refreshAd(Context context, Activity activity, String appName,
-                          String pkgName, Boolean isSmallAd, int nativeThemeColor) {
+                          String pkgName, int isSmallAd, int nativeThemeColor) {
         FrameLayout nativeAds = activity.findViewById(R.id.fl_adplaceholder);
         LinearLayout AdsAreaEmpty = activity.findViewById(R.id.ads_area_empty);
         LinearLayoutCompat inHouseAdArea =  activity.findViewById(R.id.inHouseAd);
@@ -256,20 +256,20 @@ public class AdmobAds {
 
     }
 
-    private static int getNativeLayout(boolean isSmallAd, int nativeThemeColor) {
+    private static int getNativeLayout(int isSmallAd, int nativeThemeColor) {
         int layout = R.layout.ad_unified_white;
 
         if(nativeThemeColor == ENUMS.BLACK) {
-            if (isSmallAd) {
+            if (isSmallAd == ENUMS.SMALL_ADS) {
                 layout = R.layout.ad_unified_black_small;
-            } else {
+            } else if (isSmallAd == ENUMS.LARGE_ADS) {
                 layout = R.layout.ad_unified_black;
             }
         }
         else if(nativeThemeColor == ENUMS.WHITE){
-            if (isSmallAd) {
+            if (isSmallAd == ENUMS.SMALL_ADS) {
                 layout = R.layout.ad_unified_white_small;
-            } else {
+            } else if (isSmallAd == ENUMS.LARGE_ADS) {
                 layout = R.layout.ad_unified_white;
             }
         }
@@ -277,7 +277,8 @@ public class AdmobAds {
         return layout;
     }
 
-    public static void showInHouseAds(Context context, Activity activity, String appName, String pkgName, boolean isSmallAd) {
+    public static void showInHouseAds(Context context, Activity activity, String appName,
+                                      String pkgName, int isSmallAd) {
 
         MaterialTextView adsTitle = activity.findViewById(R.id.adsTitle);
         MaterialTextView adsSubTitle = activity.findViewById(R.id.adsSubTitle);
@@ -331,7 +332,7 @@ public class AdmobAds {
         }
 
 
-        if(isSmallAd){
+        if(isSmallAd == ENUMS.SMALL_ADS){
             ad_mediaVideo.setVisibility(View.GONE);
             featureGraphic.setVisibility(View.GONE);
         }
@@ -356,7 +357,8 @@ public class AdmobAds {
 
     }
 
-    public static void showFragmentInHouseAds(Context context, View view, String appName, String pkgName, boolean isSmallAd) {
+    public static void showFragmentInHouseAds(Context context, View view, String appName,
+                                              String pkgName, int isSmallAd) {
 
         MaterialTextView adsTitle = view.findViewById(R.id.adsTitle);
         MaterialTextView adsSubTitle = view.findViewById(R.id.adsSubTitle);
@@ -410,7 +412,7 @@ public class AdmobAds {
         }
 
 
-        if(isSmallAd){
+        if(isSmallAd == ENUMS.SMALL_ADS){
             ad_mediaVideo.setVisibility(View.GONE);
             featureGraphic.setVisibility(View.GONE);
         }
@@ -436,11 +438,11 @@ public class AdmobAds {
     }
 
 
-    private static void populateNativeAdView(NativeAd nativeAd, NativeAdView adView, boolean isSmallAd) {
+    private static void populateNativeAdView(NativeAd nativeAd, NativeAdView adView, int isSmallAd) {
         // Set the media view.
         try {
 
-            if (!isSmallAd) {
+            if (isSmallAd == ENUMS.LARGE_ADS) {
                 adView.setMediaView((MediaView) adView.findViewById(R.id.ad_media));
             }
             // Set other ad assets.
@@ -455,7 +457,7 @@ public class AdmobAds {
 
             // The headline and mediaContent are guaranteed to be in every NativeAd.
             ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
-            if (!isSmallAd) {
+            if (isSmallAd == ENUMS.LARGE_ADS) {
                 adView.getMediaView().setMediaContent(nativeAd.getMediaContent());
             }
         } catch (Exception e) {
@@ -576,7 +578,7 @@ public class AdmobAds {
 
     @SuppressLint("MissingPermission")
     public static void refreshFragmentAd(Context context, Activity activity, View view, String appName,
-                                  String pkgName, Boolean isSmallAd, int nativeThemeColor) {
+                                  String pkgName, int isSmallAd, int nativeThemeColor) {
         FrameLayout nativeAds =view.findViewById(R.id.fl_adplaceholder);
         LinearLayout AdsAreaEmpty = view.findViewById(R.id.ads_area_empty);
         LinearLayoutCompat inHouseAdArea =  view.findViewById(R.id.inHouseAd);
