@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AllAdsNetworkLibrary</string>
+
+    <string name="sdk_key">dXamJFsl1rOiBkcFLc-k86viGVtluHQQUF3IUJqdidsyQ38SN25oxwOyx1G1Rqcg592lS1doVKhgtfKovvLMbI</string>
+    <string name="inter_test_id">1113767c5b1e99f2</string>
+    <string name="native_test_id">7349d6ff58ce4424</string>
+</resources>
