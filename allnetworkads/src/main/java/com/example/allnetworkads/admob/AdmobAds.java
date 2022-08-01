@@ -677,7 +677,7 @@ public class AdmobAds {
     }
 
     //interstitial ads
-    public void  redirectFragmentWithNavController(Context context, Activity activtiy, int fragmentId,
+    public static void redirectFragmentWithNavController(Context context, Activity activtiy, int fragmentId,
                                      View view, Bundle bundle, boolean backStack){
         if (AdsCounter.isShowAd(context)) {
             if (mInterstitial != null) {

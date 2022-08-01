@@ -3,6 +3,7 @@ package com.example.allnetworkads;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -47,7 +48,8 @@ public class Ads {
         }
     }
 
-    public static void showInter(Context context, Activity activity, Intent intent, boolean isFinish) {
+    public static void showInter(Context context, Activity activity, Intent intent,
+                                 boolean isFinish) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
         if(showAdmob) {
             AdmobAds.RedirectActivity(activity, intent, isFinish);
@@ -55,5 +57,14 @@ public class Ads {
         else {
             AppLovinAds.Companion.showAd(context, activity, intent, isFinish);
         }
+    }
+
+    public static void showFragmentInterWithNavController(Context context, Activity activity, int fragmentId,
+                                         View view, Bundle bundle, boolean backStack) {
+        AdmobAds.redirectFragmentWithNavController(context, activity, fragmentId, view, bundle, backStack);
+    }
+
+    public static void adOnBack(Context context, Activity activity){
+        AdmobAds.adOnBack(context, activity);
     }
 }
