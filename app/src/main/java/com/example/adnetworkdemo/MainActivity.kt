@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         //LiveAds.getLiveAds(this, packageName)
 
         Ads.loadNative(this, this, null, getString(R.string.app_name), packageName,
-            ENUMS.LARGE_ADS, ENUMS.WHITE, false)
+            ENUMS.LARGE_ADS, ENUMS.BLACK, false)
 
         Ads.loadInter(this, this)
 

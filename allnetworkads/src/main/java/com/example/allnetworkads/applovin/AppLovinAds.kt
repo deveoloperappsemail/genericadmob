@@ -16,9 +16,11 @@ import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
+import com.applovin.mediation.nativeAds.MaxNativeAdViewBinder
 import com.example.allnetworkads.AdsCounter
 import com.example.allnetworkads.R
 import com.example.allnetworkads.admob.AdmobAds
+import com.example.allnetworkads.admob.ENUMS
 import com.example.allnetworkads.adslib.Constants
 import com.example.allnetworkads.adslib.InHouseAds
 import com.example.allnetworkads.adslib.SharedPrefUtils
@@ -35,7 +37,7 @@ class AppLovinAds {
 
        // private lateinit var nativeAdLayout: FrameLayout
 
-        fun loadNativeAd(context: Context, activity: Activity,  appName: String,
+       /* fun loadNativeAd(context: Context, activity: Activity,  appName: String,
                          pkgName: String,  isSmallAd: Int) {
             //val nativeAdLayout: FrameLayout = activity.findViewById(R.id.fl_adplaceholder)
 
@@ -85,9 +87,141 @@ class AppLovinAds {
                 override fun onNativeAdClicked(ad: MaxAd) {}
             })
             nativeAdLoader.loadAd()
+        }*/
+
+        fun loadNativeAd(context: Context, activity: Activity, appName: String, pkgName: String,
+                         isSmallAd: Int, nativeThemeColor: Int) {
+            val nativeAdLayout = activity.findViewById<FrameLayout>(R.id.fl_adplaceholder)
+            val AdsAreaEmpty = activity.findViewById<LinearLayout>(R.id.ads_area_empty)
+            val inHouseAdArea: LinearLayoutCompat = activity.findViewById(R.id.inHouseAd)
+
+            val layout = if(nativeThemeColor == ENUMS.WHITE) {
+                R.layout.applovin_native_custom_white_layout
+            }
+            else {
+                R.layout.applovin_native_custom_black_layout
+            }
+
+            val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder
+                .Builder(layout)
+                .setTitleTextViewId(R.id.title_text_view)
+                .setBodyTextViewId(R.id.body_text_view)
+                .setAdvertiserTextViewId(R.id.advertiser_textView)
+                .setIconImageViewId(R.id.icon_image_view)
+                .setMediaContentViewGroupId(R.id.media_view_container)
+                .setOptionsContentViewGroupId(R.id.ad_options_view)
+                .setCallToActionButtonId(R.id.cta_button)
+                .build()
+            val nativeAdView = MaxNativeAdView(binder, context)
+
+            val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
+            nativeAdLoader = MaxNativeAdLoader(adId, context)
+            nativeAdLoader.setRevenueListener { }
+            nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
+                override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
+
+                    // Cleanup any pre-existing native ad to prevent memory leaks.
+                    if (nativeAd != null) {
+                        nativeAdLoader.destroy(nativeAd)
+                    }
+
+                    // Save ad for cleanup.
+                    nativeAd = ad
+
+                    // Add ad view to view.
+                    nativeAdLayout.removeAllViews()
+                    nativeAdLayout.addView(nativeAdView)
+
+                    nativeAdLayout.visibility = View.VISIBLE
+                    inHouseAdArea.visibility = View.GONE
+                    AdsAreaEmpty.visibility = View.GONE
+                }
+
+                override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                    if (InHouseAds.getModelAdsList().size > 0) {
+                        AdmobAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd)
+                        nativeAdLayout.visibility = View.GONE
+                        AdsAreaEmpty.visibility = View.GONE
+                        inHouseAdArea.visibility = View.VISIBLE
+                    } else {
+                        nativeAdLayout.visibility = View.GONE
+                        inHouseAdArea.visibility = View.GONE
+                        AdsAreaEmpty.visibility = View.VISIBLE
+                    }
+                }
+                override fun onNativeAdClicked(ad: MaxAd) {}
+            })
+
+            nativeAdLoader.loadAd(nativeAdView)
         }
 
-        fun loadFragmentNativeAd(context: Context, view: View,  appName: String,
+        fun loadFragmentNativeAd(context: Context, view: View, appName: String, pkgName: String,
+                         isSmallAd: Int, nativeThemeColor: Int) {
+            val nativeAdLayout = view.findViewById<FrameLayout>(R.id.fl_adplaceholder)
+            val AdsAreaEmpty = view.findViewById<LinearLayout>(R.id.ads_area_empty)
+            val inHouseAdArea: LinearLayoutCompat = view.findViewById(R.id.inHouseAd)
+
+            val layout = if(nativeThemeColor == ENUMS.WHITE) {
+                R.layout.applovin_native_custom_white_layout
+            }
+            else {
+                R.layout.applovin_native_custom_black_layout
+            }
+
+            val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder
+                .Builder(layout)
+                .setTitleTextViewId(R.id.title_text_view)
+                .setBodyTextViewId(R.id.body_text_view)
+                .setAdvertiserTextViewId(R.id.advertiser_textView)
+                .setIconImageViewId(R.id.icon_image_view)
+                .setMediaContentViewGroupId(R.id.media_view_container)
+                .setOptionsContentViewGroupId(R.id.ad_options_view)
+                .setCallToActionButtonId(R.id.cta_button)
+                .build()
+            val nativeAdView = MaxNativeAdView(binder, context)
+
+            val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
+            nativeAdLoader = MaxNativeAdLoader(adId, context)
+            nativeAdLoader.setRevenueListener { }
+            nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
+                override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
+
+                    // Cleanup any pre-existing native ad to prevent memory leaks.
+                    if (nativeAd != null) {
+                        nativeAdLoader.destroy(nativeAd)
+                    }
+
+                    // Save ad for cleanup.
+                    nativeAd = ad
+
+                    // Add ad view to view.
+                    nativeAdLayout.removeAllViews()
+                    nativeAdLayout.addView(nativeAdView)
+
+                    nativeAdLayout.visibility = View.VISIBLE
+                    inHouseAdArea.visibility = View.GONE
+                    AdsAreaEmpty.visibility = View.GONE
+                }
+
+                override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                    if (InHouseAds.getModelAdsList().size > 0) {
+                        AdmobAds.showFragmentInHouseAds(context, view, appName, pkgName, isSmallAd)
+                        nativeAdLayout.visibility = View.GONE
+                        AdsAreaEmpty.visibility = View.GONE
+                        inHouseAdArea.visibility = View.VISIBLE
+                    } else {
+                        nativeAdLayout.visibility = View.GONE
+                        inHouseAdArea.visibility = View.GONE
+                        AdsAreaEmpty.visibility = View.VISIBLE
+                    }
+                }
+                override fun onNativeAdClicked(ad: MaxAd) {}
+            })
+
+            nativeAdLoader.loadAd(nativeAdView)
+        }
+
+        /*fun loadFragmentNativeAd(context: Context, view: View,  appName: String,
                          pkgName: String,  isSmallAd: Int) {
             //val nativeAdLayout: FrameLayout = activity.findViewById(R.id.fl_adplaceholder)
 
@@ -137,8 +271,7 @@ class AppLovinAds {
                 override fun onNativeAdClicked(ad: MaxAd) {}
             })
             nativeAdLoader.loadAd()
-        }
-
+        }*/
 
         fun loadInterstitialAd(context: Context, activity: Activity) {
             val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_INTER)

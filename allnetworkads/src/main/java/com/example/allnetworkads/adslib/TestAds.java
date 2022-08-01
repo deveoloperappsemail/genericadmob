@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.allnetworkads.R;
@@ -117,34 +119,44 @@ public class TestAds {
 
     private static void fetchApplovin(Context context, String packageName) {
         RequestQueue queue = Volley.newRequestQueue(context); // this = context
-
-        StringRequest getRequest = new StringRequest(Request.Method.POST, context.getString(R.string.base_url) + "fetch_applovin_test_ads.php",
-                response -> {
-                    // display response
-                    Log.d("Response1", response.toString());
-                    try {
-                        JSONArray jsonArray = new JSONArray(response);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            SharedPrefUtils.saveData(context, Constants.APPLOVIN_INTER, jsonObject.getString("inter"));
-                            SharedPrefUtils.saveData(context, Constants.APPLOVIN_NATIVE, jsonObject.getString("native"));
-                            SharedPrefUtils.saveData(context, Constants.APPLOVIN_BANNER, jsonObject.getString("banner"));
+        StringRequest postRequest = new StringRequest(Request.Method.POST,
+                context.getString(R.string.base_url) + "fetchidsbypackage.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.i("MyLog", "PkgName: "+packageName);
+                        Log.i("MyLog", "Response: "+response);
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                SharedPrefUtils.saveData(context, Constants.APPLOVIN_INTER,
+                                        jsonObject.getString("applovinInter"));
+                                SharedPrefUtils.saveData(context, Constants.APPLOVIN_NATIVE,
+                                        jsonObject.getString("applovinNative"));
+                                SharedPrefUtils.saveData(context, Constants.APPLOVIN_BANNER,
+                                        jsonObject.getString("applovinBanner"));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            storeAds(context);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        storeAds(context);
                     }
                 },
-                error -> {
-                    try {
-                        Log.d("Response1", "Error.Response" + error.getMessage());
-                        storeAds(context);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        storeAds(context);
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        try {
+                            Log.d("Response1", "Error.Response" + error.getMessage());
+                            storeAds(context);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-        ){
+        ) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
@@ -153,8 +165,6 @@ public class TestAds {
                 return params;
             }
         };
-
-// add it to the RequestQueue
-        queue.add(getRequest);
+        queue.add(postRequest);
     }
 }

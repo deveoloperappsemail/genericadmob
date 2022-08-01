@@ -27,10 +27,12 @@ public class Ads {
         }
         else {
             if(isFragment) {
-                AppLovinAds.Companion.loadFragmentNativeAd(context, view, appName, pkgName, isSmallAd);
+                AppLovinAds.Companion.loadFragmentNativeAd(context, view, appName, pkgName,
+                        isSmallAd, nativeTheme);
             }
             else {
-                AppLovinAds.Companion.loadNativeAd(context, activity, appName, pkgName, isSmallAd);
+                AppLovinAds.Companion.loadNativeAd(context, activity, appName, pkgName,
+                        isSmallAd, nativeTheme);
             }
         }
     }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.example.allnetworkads.AdsCounter;
@@ -76,6 +78,8 @@ public class AdmobAds {
                             // Handle the error
                             Log.d("TAG", loadAdError.getMessage());
                             mInterstitial = null;
+
+                           // loadAdmobInters(context);
                         }
                     });
         } catch (Exception e) {
@@ -130,6 +134,7 @@ public class AdmobAds {
                         if(isFinish) {
                             fromActivity.finish();
                         }
+                        loadAdmobInters(fromActivity);
                     }
 
                     @Override
@@ -668,6 +673,52 @@ public class AdmobAds {
                         .build();
 
         adLoader.loadAd(new AdRequest.Builder().build());
-
     }
+
+    //interstitial ads
+    public void  redirectFragmentWithNavController(Context context, Activity activtiy, int fragmentId,
+                                     View view, Bundle bundle, boolean backStack){
+        if (AdsCounter.isShowAd(context)) {
+            if (mInterstitial != null) {
+                mInterstitial.show(activtiy);
+                mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                        super.onAdFailedToShowFullScreenContent(adError);
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        super.onAdShowedFullScreenContent();
+                    }
+
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent();
+                        Navigation.findNavController(view).popBackStack(fragmentId, backStack);
+                        Navigation.findNavController(view).navigate(fragmentId, bundle);
+                    }
+
+                    @Override
+                    public void onAdImpression() {
+                        super.onAdImpression();
+                    }
+
+                    @Override
+                    public void onAdClicked() {
+                        super.onAdClicked();
+                    }
+                });
+            } else {
+                Navigation.findNavController(view).popBackStack(fragmentId, backStack);
+                Navigation.findNavController(view).navigate(fragmentId, bundle);
+
+            }
+        } else {
+            Navigation.findNavController(view).popBackStack(fragmentId, backStack);
+            Navigation.findNavController(view).navigate(fragmentId, bundle);
+
+        }
+    }
+
 }
