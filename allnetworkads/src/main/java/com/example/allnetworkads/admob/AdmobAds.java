@@ -97,6 +97,7 @@ public class AdmobAds {
                         // Called when fullscreen content is dismissed.
                         Log.d("TAG", "The ad was dismissed.");
                         activity.finish();
+                        loadAdmobInters(context);
                     }
 
                     @Override
@@ -697,6 +698,7 @@ public class AdmobAds {
                         super.onAdDismissedFullScreenContent();
                         Navigation.findNavController(view).popBackStack(fragmentId, backStack);
                         Navigation.findNavController(view).navigate(fragmentId, bundle);
+                        loadAdmobInters(context);
                     }
 
                     @Override
