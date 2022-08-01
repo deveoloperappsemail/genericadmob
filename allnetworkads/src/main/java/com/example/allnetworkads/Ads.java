@@ -55,16 +55,28 @@ public class Ads {
             AdmobAds.RedirectActivity(activity, intent, isFinish);
         }
         else {
-            AppLovinAds.Companion.showAd(context, activity, intent, isFinish);
+            AppLovinAds.Companion.RedirectActivity(context, activity, intent, isFinish);
         }
     }
 
     public static void showFragmentInterWithNavController(Context context, Activity activity, int fragmentId,
                                          View view, Bundle bundle, boolean backStack) {
-        AdmobAds.redirectFragmentWithNavController(context, activity, fragmentId, view, bundle, backStack);
+        boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+        if(showAdmob) {
+            AdmobAds.redirectFragmentWithNavController(context, activity, fragmentId, view, bundle, backStack);
+        }
+        else {
+            AppLovinAds.Companion.redirectFragmentWithNavController(context, activity, fragmentId, view, bundle, backStack);
+        }
     }
 
     public static void adOnBack(Context context, Activity activity){
-        AdmobAds.adOnBack(context, activity);
+        boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+        if(showAdmob) {
+            AdmobAds.adOnBack(context, activity);
+        }
+        else {
+            AppLovinAds.Companion.adOnBack(context,activity);
+        }
     }
 }
