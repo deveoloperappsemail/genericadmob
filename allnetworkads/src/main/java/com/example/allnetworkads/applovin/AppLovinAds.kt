@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -96,12 +97,7 @@ class AppLovinAds {
             val AdsAreaEmpty = activity.findViewById<LinearLayout>(R.id.ads_area_empty)
             val inHouseAdArea: LinearLayoutCompat = activity.findViewById(R.id.inHouseAd)
 
-            val layout = if(nativeThemeColor == ENUMS.WHITE) {
-                R.layout.applovin_native_custom_white_layout
-            }
-            else {
-                R.layout.applovin_native_custom_black_layout
-            }
+            val layout = getNativeLayout(isSmallAd, nativeThemeColor)
 
             val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder
                 .Builder(layout)
@@ -128,6 +124,8 @@ class AppLovinAds {
                 adId = ""
             }
 
+            Log.i("MyLog", "adId: "+adId)
+
             nativeAdLoader = MaxNativeAdLoader(adId, context)
             nativeAdLoader.setRevenueListener { }
             nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
@@ -151,6 +149,7 @@ class AppLovinAds {
                 }
 
                 override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                    Log.i("MyLog", "Error: "+error.toString())
                     if (InHouseAds.getModelAdsList().size > 0) {
                         AdmobAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd)
                         nativeAdLayout.visibility = View.GONE
@@ -174,12 +173,7 @@ class AppLovinAds {
             val AdsAreaEmpty = view.findViewById<LinearLayout>(R.id.ads_area_empty)
             val inHouseAdArea: LinearLayoutCompat = view.findViewById(R.id.inHouseAd)
 
-            val layout = if(nativeThemeColor == ENUMS.WHITE) {
-                R.layout.applovin_native_custom_white_layout
-            }
-            else {
-                R.layout.applovin_native_custom_black_layout
-            }
+            val layout = getNativeLayout(isSmallAd, nativeThemeColor)
 
             val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder
                 .Builder(layout)
@@ -244,6 +238,24 @@ class AppLovinAds {
             })
 
             nativeAdLoader.loadAd(nativeAdView)
+        }
+
+        private fun getNativeLayout(isSmallAd: Int, nativeThemeColor: Int): Int {
+            var layout = R.layout.applovin_native_custom_white_layout
+            if (nativeThemeColor == ENUMS.BLACK) {
+                if (isSmallAd == ENUMS.SMALL_ADS) {
+                    layout = R.layout.applovin_native_custom_black_small
+                } else if (isSmallAd == ENUMS.LARGE_ADS) {
+                    layout = R.layout.applovin_native_custom_black_layout
+                }
+            } else if (nativeThemeColor == ENUMS.WHITE) {
+                if (isSmallAd == ENUMS.SMALL_ADS) {
+                    layout = R.layout.applovin_native_custom_white_small
+                } else if (isSmallAd == ENUMS.LARGE_ADS) {
+                    layout = R.layout.applovin_native_custom_white_layout
+                }
+            }
+            return layout
         }
 
         /*fun loadFragmentNativeAd(context: Context, view: View,  appName: String,

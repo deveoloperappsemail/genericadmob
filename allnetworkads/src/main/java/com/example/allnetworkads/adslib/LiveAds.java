@@ -20,11 +20,15 @@ import java.util.Map;
 public class LiveAds {
 
     public static void getLiveAds(Context context, String packageName) {
-        if (InternetConnection.checkConnection(context)) {
-            fetchData(context, packageName);
-        } else {
+        if(SharedPrefUtils.getStringData(context, Constants.APP_ID) == null) {
             storeAds(context);
         }
+
+        if (InternetConnection.checkConnection(context)) {
+            fetchData(context, packageName);
+        }
+
+        InHouseAds.getInHouseAds(context, packageName);
     }
 
     private static void storeAds(Context context) {
@@ -94,7 +98,6 @@ public class LiveAds {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            storeAds(context);
                         }
                     }
                 },
@@ -104,7 +107,6 @@ public class LiveAds {
                         // error
                         try {
                             Log.d("Response1", "Error.Response" + error.getMessage());
-                            storeAds(context);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

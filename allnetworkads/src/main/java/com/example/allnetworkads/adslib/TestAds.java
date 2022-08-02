@@ -20,6 +20,10 @@ import java.util.Map;
 
 public class TestAds {
     public static void getTestAds(Context context, int showAdmob, String packageName) {
+        if(SharedPrefUtils.getStringData(context, Constants.APP_ID) == null) {
+            storeAds(context);
+        }
+
         if (InternetConnection.checkConnection(context)) {
             if(showAdmob == ENUMS.ADMOB) {
                 fetchData(context);
@@ -29,9 +33,9 @@ public class TestAds {
                 fetchApplovin(context, packageName);
                 SharedPrefUtils.saveData(context, Constants.SHOW_ADMOB, false);
             }
-        } else {
-            storeAds(context);
         }
+
+        InHouseAds.getInHouseAds(context, packageName);
     }
 
     private static void storeAds(Context context) {
@@ -82,7 +86,8 @@ public class TestAds {
     private static void fetchData(Context context) {
         RequestQueue queue = Volley.newRequestQueue(context); // this = context
 
-        StringRequest getRequest = new StringRequest(Request.Method.GET, context.getString(R.string.base_url) + "fetchtestads.php",
+        StringRequest getRequest = new StringRequest(Request.Method.GET,
+                context.getString(R.string.base_url) + "fetchtestads.php",
                 response -> {
                     // display response
                     Log.d("Response1", response.toString());
@@ -99,16 +104,13 @@ public class TestAds {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        storeAds(context);
                     }
                 },
                 error -> {
                     try {
                         Log.d("Response1", "Error.Response" + error.getMessage());
-                        storeAds(context);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        storeAds(context);
                     }
                 }
         );
@@ -140,7 +142,6 @@ public class TestAds {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            storeAds(context);
                         }
                     }
                 },
@@ -150,7 +151,6 @@ public class TestAds {
                         // error
                         try {
                             Log.d("Response1", "Error.Response" + error.getMessage());
-                            storeAds(context);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

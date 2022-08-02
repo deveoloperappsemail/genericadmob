@@ -51,15 +51,15 @@ public class AdmobAds {
 
     public static void loadAdmobInters(Context context) {
         try {
-            String interID = "";
+            String interID = "no";
             try {
                 interID = SharedPrefUtils.getStringData(context, Constants.INTERSTIAL);
                 if (interID == null) {
-                    interID = "";
+                    interID = "no";
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                interID = "";
+                interID = "no";
             }
             AdRequest adRequest = new AdRequest.Builder().build();
 
