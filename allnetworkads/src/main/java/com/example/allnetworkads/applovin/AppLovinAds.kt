@@ -115,7 +115,19 @@ class AppLovinAds {
                 .build()
             val nativeAdView = MaxNativeAdView(binder, context)
 
-            val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
+            //val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
+
+            var adId: String? = ""
+            try {
+                adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
+                if (adId == null) {
+                    adId = ""
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                adId = ""
+            }
+
             nativeAdLoader = MaxNativeAdLoader(adId, context)
             nativeAdLoader.setRevenueListener { }
             nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
@@ -181,7 +193,19 @@ class AppLovinAds {
                 .build()
             val nativeAdView = MaxNativeAdView(binder, context)
 
-            val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
+            //val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
+
+            var adId: String? = ""
+            try {
+                adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
+                if (adId == null) {
+                    adId = ""
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                adId = ""
+            }
+
             nativeAdLoader = MaxNativeAdLoader(adId, context)
             nativeAdLoader.setRevenueListener { }
             nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
@@ -275,8 +299,20 @@ class AppLovinAds {
         }*/
 
         fun loadInterstitialAd(context: Context, activity: Activity) {
-            val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_INTER)
-            interstitialAd = MaxInterstitialAd(adId, activity )
+            //val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_INTER)
+
+            var interID: String? = ""
+            try {
+                interID = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_INTER)
+                if (interID == null) {
+                    interID = ""
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                interID = ""
+            }
+
+            interstitialAd = MaxInterstitialAd(interID, activity )
             // Load the first ad
             interstitialAd.loadAd()
         }

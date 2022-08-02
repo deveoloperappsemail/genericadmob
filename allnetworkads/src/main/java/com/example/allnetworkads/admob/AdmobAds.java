@@ -714,12 +714,10 @@ public class AdmobAds {
             } else {
                 Navigation.findNavController(view).popBackStack(fragmentId, backStack);
                 Navigation.findNavController(view).navigate(fragmentId, bundle);
-
             }
         } else {
             Navigation.findNavController(view).popBackStack(fragmentId, backStack);
             Navigation.findNavController(view).navigate(fragmentId, bundle);
-
         }
     }
 
