@@ -27,7 +27,7 @@ public class InHouseAds {
     private static void getData(Context context, String packageName) {
         RequestQueue queue = Volley.newRequestQueue(context); // this = context
 
-        StringRequest getRequest = new StringRequest(Request.Method.POST, context.getString(R.string.base_url) + "inhouseadsfetchbypkg.php",
+        StringRequest getRequest = new StringRequest(Request.Method.POST, context.getString(R.string.ads_lib_base_url) + "inhouseadsfetchbypkg.php",
                 response -> {
                     // display response
                     Log.d("Response1", response.toString());

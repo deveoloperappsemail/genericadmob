@@ -87,7 +87,7 @@ public class TestAds {
         RequestQueue queue = Volley.newRequestQueue(context); // this = context
 
         StringRequest getRequest = new StringRequest(Request.Method.GET,
-                context.getString(R.string.base_url) + "fetchtestads.php",
+                context.getString(R.string.ads_lib_base_url) + "fetchtestads.php",
                 response -> {
                     // display response
                     Log.d("Response1", response.toString());
@@ -122,7 +122,7 @@ public class TestAds {
     private static void fetchApplovin(Context context, String packageName) {
         RequestQueue queue = Volley.newRequestQueue(context); // this = context
         StringRequest postRequest = new StringRequest(Request.Method.POST,
-                context.getString(R.string.base_url) + "fetchidsbypackage.php",
+                context.getString(R.string.ads_lib_base_url) + "fetchidsbypackage.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

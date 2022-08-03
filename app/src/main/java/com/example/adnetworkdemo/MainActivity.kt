@@ -4,9 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.FrameLayout
 import com.example.allnetworkads.Ads
-import com.example.allnetworkads.admob.AdmobAds
 import com.example.allnetworkads.admob.ENUMS
 import com.example.allnetworkads.adslib.TestAds
 
@@ -26,8 +24,8 @@ class MainActivity : AppCompatActivity() {
 
         //LiveAds.getLiveAds(this, packageName)
 
-        Ads.loadNative(this, this, null, getString(R.string.app_name), packageName,
-                ENUMS.SMALL_ADS, ENUMS.BLACK, false)
+        Ads.loadNative(this, this, null, getString(R.string.ads_lib_app_name), packageName,
+                ENUMS.SMALL_ADS, ENUMS.WHITE, false)
 
         Ads.loadInter(this, this)
 

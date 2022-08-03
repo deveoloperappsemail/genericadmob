@@ -18,7 +18,7 @@ public class AdsClick {
                                   String adPkgName, String adType) {
         RequestQueue queue = Volley.newRequestQueue(context); // this = context
         StringRequest getRequest = new StringRequest(Request.Method.POST,
-                context.getString(R.string.base_url) + "adclick.php",
+                context.getString(R.string.ads_lib_base_url) + "adclick.php",
                 response -> {
                     // display response
                     Log.d("Response1", response.toString());

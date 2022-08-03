@@ -73,7 +73,7 @@ public class LiveAds {
 
     private static void fetchData(Context context, String packageName) {
         RequestQueue queue = Volley.newRequestQueue(context); // this = context
-        StringRequest postRequest = new StringRequest(Request.Method.POST, context.getString(R.string.base_url) + "fetchidsbypackage.php",
+        StringRequest postRequest = new StringRequest(Request.Method.POST, context.getString(R.string.ads_lib_base_url) + "fetchidsbypackage.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
