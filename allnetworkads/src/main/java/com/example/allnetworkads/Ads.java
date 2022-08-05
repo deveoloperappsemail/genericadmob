@@ -51,6 +51,7 @@ public class Ads {
     public static void showInterEmpty(Context context, Activity activity) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
         if(showAdmob) {
+            //
             AdmobAds.showInter(activity);
         }
         else {
