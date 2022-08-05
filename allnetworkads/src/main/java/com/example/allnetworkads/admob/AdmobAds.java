@@ -164,6 +164,33 @@ public class AdmobAds {
         }
     }
 
+    public static void showInter(Activity fromActivity) {
+        if (AdsCounter.isShowAd(fromActivity)) {
+            if (mInterstitial != null) {
+                mInterstitial.show(fromActivity);
+                mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        Log.d("TAG", "The ad was dismissed.");
+                        loadAdmobInters(fromActivity);
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        Log.d("TAG", "The ad failed to show.");
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        mInterstitial = null;
+                        Log.d("TAG", "The ad was shown.");
+                    }
+                });
+            }
+        }
+    }
+
+
     /**
      * Creates a request for a new native ad based on the boolean parameters and calls the
      * corresponding "populate" method when one is successfully returned.
@@ -443,7 +470,6 @@ public class AdmobAds {
 
     }
 
-
     private static void populateNativeAdView(NativeAd nativeAd, NativeAdView adView, int isSmallAd) {
         // Set the media view.
         try {
@@ -720,5 +746,4 @@ public class AdmobAds {
             Navigation.findNavController(view).navigate(fragmentId, bundle);
         }
     }
-
 }

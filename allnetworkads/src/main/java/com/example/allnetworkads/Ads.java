@@ -48,6 +48,16 @@ public class Ads {
         }
     }
 
+    public static void showInterEmpty(Context context, Activity activity) {
+        boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+        if(showAdmob) {
+            AdmobAds.showInter(activity);
+        }
+        else {
+            AppLovinAds.Companion.showInter(context);
+        }
+    }
+
     public static void showInter(Context context, Activity activity, Intent intent,
                                  boolean isFinish) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
