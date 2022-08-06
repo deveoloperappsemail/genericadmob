@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         /*to show admob ads save true
         to show applovin ads save false*/
-        TestAds.getTestAds(this, ENUMS.APPLOVIN, packageName)
+        TestAds.getTestAds(this, ENUMS.ADMOB, packageName)
 
         //LiveAds.getLiveAds(this, packageName)
 
@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, NextActivity::class.java)
             Ads.showInter(this, this, intent, false)
         }
+
+        Ads.showBanner(this, this)
     }
 
 }

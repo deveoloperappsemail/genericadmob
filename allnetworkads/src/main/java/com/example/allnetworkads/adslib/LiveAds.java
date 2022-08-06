@@ -32,6 +32,8 @@ public class LiveAds {
     }
 
     private static void storeAds(Context context) {
+        SharedPrefUtils.saveData(context, Constants.SHOW_ADMOB, true);
+
         String appid = SharedPrefUtils.getStringData(context, Constants.APP_ID);
         if (appid == null) {
             SharedPrefUtils.saveData(context, Constants.APP_ID, "no");

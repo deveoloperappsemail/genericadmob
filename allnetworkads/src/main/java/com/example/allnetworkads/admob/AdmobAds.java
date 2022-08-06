@@ -32,6 +32,8 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.VideoController;
@@ -42,12 +44,82 @@ import com.google.android.gms.ads.nativead.MediaView;
 import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.gms.ads.nativead.NativeAdOptions;
 import com.google.android.gms.ads.nativead.NativeAdView;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
 
 public class AdmobAds {
 
     public static InterstitialAd mInterstitial;
     public static NativeAd nativeAd1;
+
+    public static void showBanner(Context context, Activity activity) {
+
+        MaterialCardView adArea = activity.findViewById(R.id.ad_area);
+        LinearLayout adFrame = activity.findViewById(R.id.ad_layout);
+
+        String bannerID = "no";
+        try {
+            bannerID = SharedPrefUtils.getStringData(context, Constants.BANNER);
+            if (bannerID == null) {
+                bannerID = "no";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            bannerID = "no";
+        }
+
+        AdView mAdView = new AdView(context);
+        mAdView.setAdSize(AdSize.BANNER);
+        mAdView.setAdUnitId(bannerID);
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+
+        Log.i("MyLog", "Load ad");
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+            }
+
+            @Override
+            public void onAdFailedToLoad(LoadAdError adError) {
+                // Code to be executed when an ad request fails.
+                Log.i("MyLog", "Ad failed: "+adError);
+                adArea.setVisibility(View.VISIBLE);
+                adFrame.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAdImpression() {
+                // Code to be executed when an impression is recorded
+                // for an ad.
+            }
+
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                Log.i("MyLog", "Ad loaded");
+                adArea.setVisibility(View.GONE);
+                adFrame.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+        });
+
+        if(mAdView.getAdSize() != null || mAdView.getAdUnitId() != null)
+            mAdView.loadAd(adRequest);
+        adFrame.addView(mAdView);
+    }
 
     public static void loadAdmobInters(Context context) {
         try {
