@@ -14,10 +14,23 @@ import com.example.allnetworkads.applovin.AppLovinAds;
 
 public class Ads {
 
-    public static void showBanner(Context context, Activity activity) {
+    public static void showActivityBanner(Context context, Activity activity) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
         if(showAdmob) {
-            AdmobAds.showBanner(context, activity);
+            AdmobAds.showActivityBanner(context, activity);
+        }
+        else {
+            AppLovinAds.Companion.showActivityBanner(context, activity);
+        }
+    }
+
+    public static void showFragmentBanner(Context context, View view) {
+        boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+        if(showAdmob) {
+            AdmobAds.showFragmentBanner(context, view);
+        }
+        else {
+            AppLovinAds.Companion.showFragmentBanner(context, view);
         }
     }
 

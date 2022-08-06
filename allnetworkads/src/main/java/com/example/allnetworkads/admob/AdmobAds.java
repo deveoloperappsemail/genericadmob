@@ -52,11 +52,23 @@ public class AdmobAds {
     public static InterstitialAd mInterstitial;
     public static NativeAd nativeAd1;
 
-    public static void showBanner(Context context, Activity activity) {
-
+    public static void showActivityBanner(Context context, Activity activity) {
         MaterialCardView adArea = activity.findViewById(R.id.ad_area);
         LinearLayout adFrame = activity.findViewById(R.id.ad_layout);
 
+        showBanner(context, adArea, adFrame);
+    }
+
+    public static void showFragmentBanner(Context context, View view) {
+
+        MaterialCardView adArea = view.findViewById(R.id.ad_area);
+        LinearLayout adFrame = view.findViewById(R.id.ad_layout);
+
+        showBanner(context, adArea, adFrame);
+    }
+
+    public static void showBanner(Context context,
+                                  MaterialCardView adArea, LinearLayout adFrame) {
         String bannerID = "no";
         try {
             bannerID = SharedPrefUtils.getStringData(context, Constants.BANNER);

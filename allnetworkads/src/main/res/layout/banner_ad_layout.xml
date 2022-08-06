@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ad_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="1.0"
-    android:orientation="vertical" />-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -27,6 +15,7 @@
         android:orientation="vertical"
         app:cardBackgroundColor="@color/ads_lib_white"
         app:cardCornerRadius="0dp"
+        android:visibility="visible"
         app:cardElevation="5dp"
         app:strokeColor="@color/ads_lib_black"
         app:strokeWidth="1dp">

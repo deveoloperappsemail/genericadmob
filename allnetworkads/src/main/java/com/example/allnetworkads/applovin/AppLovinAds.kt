@@ -7,13 +7,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.navigation.Navigation
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdListener
+import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
+import com.applovin.mediation.ads.MaxAdView
 import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
@@ -26,6 +29,7 @@ import com.example.allnetworkads.admob.ENUMS
 import com.example.allnetworkads.adslib.Constants
 import com.example.allnetworkads.adslib.InHouseAds
 import com.example.allnetworkads.adslib.SharedPrefUtils
+import com.google.android.material.card.MaterialCardView
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
@@ -37,59 +41,66 @@ class AppLovinAds {
         private lateinit var nativeAdLoader: MaxNativeAdLoader
         private var nativeAd: MaxAd? = null
 
-       // private lateinit var nativeAdLayout: FrameLayout
+        fun showActivityBanner(context: Context, activity: Activity) {
+            val adArea: MaterialCardView = activity.findViewById(R.id.ad_area)
+            val adFrame: LinearLayout = activity.findViewById(R.id.ad_layout)
 
-       /* fun loadNativeAd(context: Context, activity: Activity,  appName: String,
-                         pkgName: String,  isSmallAd: Int) {
-            //val nativeAdLayout: FrameLayout = activity.findViewById(R.id.fl_adplaceholder)
+            showBanner(context, adArea, adFrame)
+        }
 
-            val nativeAds = activity.findViewById<FrameLayout>(R.id.fl_adplaceholder)
-            val AdsAreaEmpty = activity.findViewById<LinearLayout>(R.id.ads_area_empty)
-            val inHouseAdArea: LinearLayoutCompat = activity.findViewById(R.id.inHouseAd)
+        fun showFragmentBanner(context: Context, view: View) {
+            val adArea: MaterialCardView = view.findViewById(R.id.ad_area)
+            val adFrame: LinearLayout = view.findViewById(R.id.ad_layout)
 
-           // nativeAdLayout = findViewById(R.id.native_ad_layout)
-            val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
-            Log.i("MyLog", "adid: "+adId)
-            nativeAdLoader = MaxNativeAdLoader(adId, context)
-            nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
-                override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
-                    // Cleanup any pre-existing native ad to prevent memory leaks.
-                    if (nativeAd != null) {
-                        nativeAdLoader.destroy(nativeAd)
-                    }
+            showBanner(context, adArea, adFrame)
+        }
 
-                    // Save ad for cleanup.
-                    nativeAd = ad
+        fun showBanner(context: Context, adArea: MaterialCardView, adFrame: LinearLayout) {
+            var adId = ""
+            try {
+                adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_BANNER)
+                if (adId == null) {
+                    adId = ""
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                adId = ""
+            }
 
-                    // Add ad view to view.
-                    nativeAds.removeAllViews()
-                    nativeAds.addView(nativeAdView)
-
-                    //correct
-
-                    //correct
-                    nativeAds.visibility = View.VISIBLE
-                    inHouseAdArea.visibility = View.GONE
-                    AdsAreaEmpty.visibility = View.GONE
-
+            val adView = MaxAdView(adId, context)
+            adView.setListener(object: MaxAdViewAdListener {
+                override fun onAdLoaded(ad: MaxAd?) {
+                    Log.i("MyLog", "Applovin banner ad loaded")
+                    adArea.visibility = View.GONE
+                    adFrame.visibility = View.VISIBLE
+                }
+                override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                    Log.i("MyLog", "Applovin banner ad failed")
+                    adArea.visibility = View.VISIBLE
+                    adFrame.visibility = View.GONE
                 }
 
-                override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
-                    if (InHouseAds.getModelAdsList().size > 0) {
-                        AdmobAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd)
-                        nativeAds.visibility = View.GONE
-                        AdsAreaEmpty.visibility = View.GONE
-                        inHouseAdArea.visibility = View.VISIBLE
-                    } else {
-                        nativeAds.visibility = View.GONE
-                        inHouseAdArea.visibility = View.GONE
-                        AdsAreaEmpty.visibility = View.VISIBLE
-                    }
-                }
-                override fun onNativeAdClicked(ad: MaxAd) {}
+                override fun onAdDisplayed(ad: MaxAd?) {}
+                override fun onAdHidden(ad: MaxAd?) {}
+                override fun onAdClicked(ad: MaxAd?) {}
+                override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {}
+                override fun onAdExpanded(ad: MaxAd?) {}
+                override fun onAdCollapsed(ad: MaxAd?) {}
             })
-            nativeAdLoader.loadAd()
-        }*/
+
+            // Stretch to the width of the screen for banners to be fully functional
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+
+            // Banner height on phones and tablets is 50 and 90, respectively
+            val heightPx = context.resources.getDimensionPixelSize(R.dimen.banner_height)
+
+            adView.layoutParams = FrameLayout.LayoutParams(width, heightPx)
+
+            adFrame.addView(adView)
+
+            // Load the ad
+            adView.loadAd()
+        }
 
         fun loadNativeAd(context: Context, activity: Activity, appName: String, pkgName: String,
                          isSmallAd: Int, nativeThemeColor: Int) {
