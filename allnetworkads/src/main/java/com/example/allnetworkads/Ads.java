@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.allnetworkads.admob.AdmobAds;
 import com.example.allnetworkads.adslib.Constants;
 import com.example.allnetworkads.adslib.SharedPrefUtils;
@@ -87,6 +89,17 @@ public class Ads {
         }
         else {
             AppLovinAds.Companion.RedirectActivity(context, activity, intent, isFinish);
+        }
+    }
+
+    public static void showFragmentInterWithCommit(Context context, Activity activity,
+                                                   FragmentTransaction fragmentTransaction) {
+        boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+        if(showAdmob) {
+            AdmobAds.redirectFragmentWithCommit(context, activity, fragmentTransaction);
+        }
+        else {
+            AppLovinAds.Companion.redirectFragmentWithCommit(context, fragmentTransaction);
         }
     }
 

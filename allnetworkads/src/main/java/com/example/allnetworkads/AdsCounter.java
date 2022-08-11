@@ -1,6 +1,7 @@
 package com.example.allnetworkads;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.allnetworkads.adslib.Constants;
 import com.example.allnetworkads.adslib.SharedPrefUtils;
@@ -26,7 +27,6 @@ public class AdsCounter {
     }
 
     public static boolean isShowAd(Context context) {
-//        return true;
         int count = getCount(context);
         int matchCounter = 0;
         try {
@@ -34,6 +34,7 @@ public class AdsCounter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         if (count == matchCounter) {
             resetCount(context);
             return true;
@@ -41,6 +42,5 @@ public class AdsCounter {
             addCount(context);
             return false;
         }
-        //return true;
     }
 }

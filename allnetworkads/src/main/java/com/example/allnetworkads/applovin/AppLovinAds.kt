@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.Navigation
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdListener
@@ -154,6 +156,9 @@ class AppLovinAds {
                     nativeAdLayout.removeAllViews()
                     nativeAdLayout.addView(nativeAdView)
 
+                    val text = activity.findViewById<TextView>(R.id.title_text_view)
+                    text.isSelected = true
+
                     nativeAdLayout.visibility = View.VISIBLE
                     inHouseAdArea.visibility = View.GONE
                     AdsAreaEmpty.visibility = View.GONE
@@ -228,6 +233,9 @@ class AppLovinAds {
                     nativeAdLayout.removeAllViews()
                     nativeAdLayout.addView(nativeAdView)
 
+                    val text = view.findViewById<TextView>(R.id.title_text_view)
+                    text.isSelected = true
+
                     nativeAdLayout.visibility = View.VISIBLE
                     inHouseAdArea.visibility = View.GONE
                     AdsAreaEmpty.visibility = View.GONE
@@ -269,58 +277,6 @@ class AppLovinAds {
             return layout
         }
 
-        /*fun loadFragmentNativeAd(context: Context, view: View,  appName: String,
-                         pkgName: String,  isSmallAd: Int) {
-            //val nativeAdLayout: FrameLayout = activity.findViewById(R.id.fl_adplaceholder)
-
-            val nativeAds = view.findViewById<FrameLayout>(R.id.fl_adplaceholder)
-            val AdsAreaEmpty = view.findViewById<LinearLayout>(R.id.ads_area_empty)
-            val inHouseAdArea: LinearLayoutCompat = view.findViewById(R.id.inHouseAd)
-
-            // nativeAdLayout = findViewById(R.id.native_ad_layout)
-            val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_NATIVE)
-            Log.i("MyLog", "adid: "+adId)
-            nativeAdLoader = MaxNativeAdLoader(adId, context)
-            nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
-                override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
-                    // Cleanup any pre-existing native ad to prevent memory leaks.
-                    if (nativeAd != null) {
-                        nativeAdLoader.destroy(nativeAd)
-                    }
-
-                    // Save ad for cleanup.
-                    nativeAd = ad
-
-                    // Add ad view to view.
-                    nativeAds.removeAllViews()
-                    nativeAds.addView(nativeAdView)
-
-                    //correct
-
-                    //correct
-                    nativeAds.visibility = View.VISIBLE
-                    inHouseAdArea.visibility = View.GONE
-                    AdsAreaEmpty.visibility = View.GONE
-
-                }
-
-                override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
-                    if (InHouseAds.getModelAdsList().size > 0) {
-                        AdmobAds.showFragmentInHouseAds(context, view, appName, pkgName, isSmallAd)
-                        nativeAds.visibility = View.GONE
-                        AdsAreaEmpty.visibility = View.GONE
-                        inHouseAdArea.visibility = View.VISIBLE
-                    } else {
-                        nativeAds.visibility = View.GONE
-                        inHouseAdArea.visibility = View.GONE
-                        AdsAreaEmpty.visibility = View.VISIBLE
-                    }
-                }
-                override fun onNativeAdClicked(ad: MaxAd) {}
-            })
-            nativeAdLoader.loadAd()
-        }*/
-
         fun loadInterstitialAd(context: Context, activity: Activity) {
             //val adId = SharedPrefUtils.getStringData(context, Constants.APPLOVIN_INTER)
 
@@ -342,6 +298,7 @@ class AppLovinAds {
 
         fun RedirectActivity(context: Context, activity: Activity, intent: Intent, isFinish: Boolean) {
             if (AdsCounter.isShowAd(context)) {
+                Log.i("MyLog", "Show ad")
                 interstitialAd.setListener(object : MaxAdListener {
                     override fun onAdLoaded(ad: MaxAd?) {
                         // Interstitial ad is ready to be shown. interstitialAd.isReady() will now return 'true'
@@ -393,12 +350,12 @@ class AppLovinAds {
                 }
             }
             else {
+                Log.i("MyLog", "Do not Show ad")
                 context.startActivity(intent)
                 if (isFinish) {
                     activity.finish()
                 }
             }
-
         }
 
         fun showInter(context: Context) {
@@ -549,6 +506,63 @@ class AppLovinAds {
             else {
                 Navigation.findNavController(view).popBackStack(fragmentId, backStack)
                 Navigation.findNavController(view).navigate(fragmentId, bundle)
+            }
+        }
+
+        fun redirectFragmentWithCommit(context: Context, fragmentTransaction: FragmentTransaction) {
+            if (AdsCounter.isShowAd(context)) {
+                interstitialAd.setListener(object : MaxAdListener {
+                    override fun onAdLoaded(ad: MaxAd?) {
+                        // Interstitial ad is ready to be shown. interstitialAd.isReady() will now return 'true'
+                        // Reset retry attempt
+                        retryAttempt = 0.0
+                    }
+
+                    override fun onAdDisplayed(ad: MaxAd?) {}
+                    override fun onAdClicked(ad: MaxAd?) {}
+
+                    override fun onAdHidden(ad: MaxAd?) {
+                        // Interstitial ad is hidden. Pre-load the next ad
+                        interstitialAd.loadAd()
+                        // Commit the transaction
+
+                        // Commit the transaction
+                        fragmentTransaction.commit()
+                    }
+
+                    override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                        // Interstitial ad failed to load
+                        // AppLovin recommends that you retry with exponentially higher delays up to a maximum delay (in this case 64 seconds)
+
+                        retryAttempt++
+                        val delayMillis = TimeUnit.SECONDS.toMillis(
+                            2.0.pow(
+                                6.0.coerceAtMost(
+                                    retryAttempt
+                                )
+                            ).toLong()
+                        )
+
+                        Handler().postDelayed({ interstitialAd.loadAd() }, delayMillis)
+                    }
+
+                    override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                        // Interstitial ad failed to display. AppLovin recommends that you load the next ad.
+                        interstitialAd.loadAd()
+                    }
+                })
+
+                if (interstitialAd.isReady) {
+                    interstitialAd.showAd()
+                }
+                else {
+                    // Commit the transaction
+                    fragmentTransaction.commit()
+                }
+            }
+            else {
+                // Commit the transaction
+                fragmentTransaction.commit()
             }
         }
     }

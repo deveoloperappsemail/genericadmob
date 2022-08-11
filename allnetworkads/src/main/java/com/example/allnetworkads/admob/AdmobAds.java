@@ -19,6 +19,8 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
@@ -209,6 +211,7 @@ public class AdmobAds {
 
     public static void RedirectActivity(Activity fromActivity, Intent intent, boolean isFinish) {
         if (AdsCounter.isShowAd(fromActivity)) {
+            Log.i("MyLog", "Show ad");
             if (mInterstitial != null) {
                 mInterstitial.show(fromActivity);
                 mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
@@ -241,6 +244,7 @@ public class AdmobAds {
                 }
             }
         } else {
+            Log.i("MyLog", "Do not Show ad");
             fromActivity.startActivity(intent);
             if(isFinish) {
                 fromActivity.finish();
@@ -328,16 +332,13 @@ public class AdmobAds {
                             AdsAreaEmpty.setVisibility(View.GONE);
 
                             //Testing
-                      /* showInHouseAds();
-                        nativeAds.setVisibility(View.GONE);
-                        AdsAreaEmpty.setVisibility(View.GONE);
-                        inHouseAdArea.setVisibility(View.VISIBLE);*/
+                           /* showInHouseAds(context, activity, appName, pkgName, isSmallAd);
+                            nativeAds.setVisibility(View.GONE);
+                            AdsAreaEmpty.setVisibility(View.GONE);
+                            inHouseAdArea.setVisibility(View.VISIBLE);*/
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
-
-
                     }
                 });
 
@@ -828,6 +829,52 @@ public class AdmobAds {
         } else {
             Navigation.findNavController(view).popBackStack(fragmentId, backStack);
             Navigation.findNavController(view).navigate(fragmentId, bundle);
+        }
+    }
+
+    public static void redirectFragmentWithCommit(Context context, Activity activtiy,
+                                                  FragmentTransaction fragmentTransaction){
+        if (AdsCounter.isShowAd(context)) {
+            if (mInterstitial != null) {
+                mInterstitial.show(activtiy);
+                mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                        super.onAdFailedToShowFullScreenContent(adError);
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        super.onAdShowedFullScreenContent();
+                    }
+
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent();
+
+                        // Commit the transaction
+                        fragmentTransaction.commit();
+
+                        loadAdmobInters(context);
+                    }
+
+                    @Override
+                    public void onAdImpression() {
+                        super.onAdImpression();
+                    }
+
+                    @Override
+                    public void onAdClicked() {
+                        super.onAdClicked();
+                    }
+                });
+            } else {
+                // Commit the transaction
+                fragmentTransaction.commit();
+            }
+        } else {
+            // Commit the transaction
+            fragmentTransaction.commit();
         }
     }
 }

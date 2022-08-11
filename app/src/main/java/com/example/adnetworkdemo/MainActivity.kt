@@ -4,8 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import com.example.allnetworkads.Ads
 import com.example.allnetworkads.admob.ENUMS
+import com.example.allnetworkads.adslib.InHouseAds
+import com.example.allnetworkads.adslib.InHouseInterAds
 import com.example.allnetworkads.adslib.TestAds
 
 class MainActivity : AppCompatActivity() {
@@ -18,22 +21,31 @@ class MainActivity : AppCompatActivity() {
         val button = findViewById<Button>(R.id.button)
         //val adFrame = findViewById<FrameLayout>(R.id.native_ad_layout)
 
+        val text = findViewById<TextView>(R.id.title_text_view)
+        text.isSelected = true
+
         /*to show admob ads save true
         to show applovin ads save false*/
-        TestAds.getTestAds(this, ENUMS.APPLOVIN, packageName)
+        TestAds.getTestAds(this, ENUMS.ADMOB, packageName)
 
         //LiveAds.getLiveAds(this, packageName)
 
         Ads.loadNative(this, this, null, getString(R.string.ads_lib_app_name), packageName,
-                ENUMS.SMALL_ADS, ENUMS.BLACK, false)
+                ENUMS.LARGE_ADS, ENUMS.BLACK, false)
 
         Ads.loadInter(this, this)
 
         button.setOnClickListener {
             val intent = Intent(this, NextActivity::class.java)
+            //startActivity(intent)
             Ads.showInter(this, this, intent, false)
+           // openFullScreenDialog()
         }
 
         Ads.showActivityBanner(this, this)
+    }
+
+    private fun openFullScreenDialog() {
+        InHouseInterAds.showInHouseInterAd(this)
     }
 }

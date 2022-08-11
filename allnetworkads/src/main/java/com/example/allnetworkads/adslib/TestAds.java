@@ -139,6 +139,8 @@ public class TestAds {
                                         jsonObject.getString("applovinNative"));
                                 SharedPrefUtils.saveData(context, Constants.APPLOVIN_BANNER,
                                         jsonObject.getString("applovinBanner"));
+                                SharedPrefUtils.saveData(context, Constants.AD_COUNTER,
+                                        jsonObject.getString("intercounter"));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
