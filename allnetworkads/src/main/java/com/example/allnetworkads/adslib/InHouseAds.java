@@ -31,6 +31,7 @@ public class InHouseAds {
                 response -> {
                     // display response
                     Log.d("Response1", response.toString());
+                    Log.i("MyLog", response.toString());
                     try {
                         modelArrayList.clear();
                         JSONArray jsonArray = new JSONArray(response);

@@ -28,9 +28,7 @@ import com.example.allnetworkads.AdsCounter
 import com.example.allnetworkads.R
 import com.example.allnetworkads.admob.AdmobAds
 import com.example.allnetworkads.admob.ENUMS
-import com.example.allnetworkads.adslib.Constants
-import com.example.allnetworkads.adslib.InHouseAds
-import com.example.allnetworkads.adslib.SharedPrefUtils
+import com.example.allnetworkads.adslib.*
 import com.google.android.material.card.MaterialCardView
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
@@ -162,12 +160,19 @@ class AppLovinAds {
                     nativeAdLayout.visibility = View.VISIBLE
                     inHouseAdArea.visibility = View.GONE
                     AdsAreaEmpty.visibility = View.GONE
+
+
+                    //FOR TESTING - TO REMOVE
+                   /* InHouseNativeAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd)
+                    nativeAdLayout.visibility = View.GONE
+                    AdsAreaEmpty.visibility = View.GONE
+                    inHouseAdArea.visibility = View.VISIBLE*/
                 }
 
                 override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
                     Log.i("MyLog", "Error: "+error.toString())
                     if (InHouseAds.getModelAdsList().size > 0) {
-                        AdmobAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd)
+                        InHouseNativeAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd)
                         nativeAdLayout.visibility = View.GONE
                         AdsAreaEmpty.visibility = View.GONE
                         inHouseAdArea.visibility = View.VISIBLE
@@ -243,7 +248,7 @@ class AppLovinAds {
 
                 override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
                     if (InHouseAds.getModelAdsList().size > 0) {
-                        AdmobAds.showFragmentInHouseAds(context, view, appName, pkgName, isSmallAd)
+                        InHouseNativeAds.showFragmentInHouseAds(context, view, appName, pkgName, isSmallAd)
                         nativeAdLayout.visibility = View.GONE
                         AdsAreaEmpty.visibility = View.GONE
                         inHouseAdArea.visibility = View.VISIBLE
@@ -296,7 +301,8 @@ class AppLovinAds {
             interstitialAd.loadAd()
         }
 
-        fun RedirectActivity(context: Context, activity: Activity, intent: Intent, isFinish: Boolean) {
+        fun RedirectActivity(context: Context, activity: Activity, appName: String, packageName: String,
+                             intent: Intent, isFinish: Boolean) {
             if (AdsCounter.isShowAd(context)) {
                 Log.i("MyLog", "Show ad")
                 interstitialAd.setListener(object : MaxAdListener {
@@ -340,13 +346,22 @@ class AppLovinAds {
                     }
                 })
 
-                if (interstitialAd.isReady)
+                var isReady = interstitialAd.isReady
+
+                //FOR TESTING ONLY - TO REMOVE
+                //isReady = false
+
+                if (isReady) {
                     interstitialAd.showAd()
+                }
                 else {
-                    context.startActivity(intent)
+                    /*context.startActivity(intent)
                     if (isFinish) {
                         activity.finish()
-                    }
+                    }*/
+
+                    InHouseInterAds.redirectActivityInHouseInterAd(context, activity, appName,
+                        packageName, intent, isFinish)
                 }
             }
             else {
@@ -358,7 +373,7 @@ class AppLovinAds {
             }
         }
 
-        fun showInter(context: Context) {
+        fun showInter(context: Context, activity: Activity, appName: String, packageName: String) {
             if (AdsCounter.isShowAd(context)) {
                 interstitialAd.setListener(object : MaxAdListener {
                     override fun onAdLoaded(ad: MaxAd?) {
@@ -400,10 +415,13 @@ class AppLovinAds {
                 if (interstitialAd.isReady) {
                     interstitialAd.showAd()
                 }
+                else {
+                    InHouseInterAds.emptyInHouseInterAd(context, activity, appName, packageName)
+                }
             }
         }
 
-        fun adOnBack(context: Context, activity: Activity) {
+        fun adOnBack(context: Context, activity: Activity, appName: String, packageName: String) {
             if (AdsCounter.isShowAd(context)) {
                 interstitialAd.setListener(object : MaxAdListener {
                     override fun onAdLoaded(ad: MaxAd?) {
@@ -446,7 +464,8 @@ class AppLovinAds {
                 if (interstitialAd.isReady)
                     interstitialAd.showAd()
                 else {
-                    activity.finish()
+                   // activity.finish()
+                    InHouseInterAds.onBackInHouseInterAd(context, activity, appName, packageName)
                 }
             }
             else {
@@ -454,7 +473,8 @@ class AppLovinAds {
             }
         }
 
-        fun redirectFragmentWithNavController(context: Context, activity: Activity, fragmentId: Int,
+        fun redirectFragmentWithNavController(context: Context, activity: Activity, appName: String,
+                                              packageName: String, fragmentId: Int,
                                               view:View, bundle: Bundle, backStack: Boolean) {
             if (AdsCounter.isShowAd(context)) {
                 interstitialAd.setListener(object : MaxAdListener {
@@ -496,11 +516,14 @@ class AppLovinAds {
                     }
                 })
 
-                if (interstitialAd.isReady)
+                if (interstitialAd.isReady) {
                     interstitialAd.showAd()
+                }
                 else {
-                    Navigation.findNavController(view).popBackStack(fragmentId, backStack)
-                    Navigation.findNavController(view).navigate(fragmentId, bundle)
+                    /*Navigation.findNavController(view).popBackStack(fragmentId, backStack)
+                    Navigation.findNavController(view).navigate(fragmentId, bundle)*/
+                    InHouseInterAds.navFragmentInHouseInterAd(context, activity, appName, packageName,
+                        view, fragmentId, bundle, backStack)
                 }
             }
             else {
@@ -509,7 +532,8 @@ class AppLovinAds {
             }
         }
 
-        fun redirectFragmentWithCommit(context: Context, fragmentTransaction: FragmentTransaction) {
+        fun redirectFragmentWithCommit(context: Context, activity: Activity, appName: String,
+                                       packageName: String, fragmentTransaction: FragmentTransaction) {
             if (AdsCounter.isShowAd(context)) {
                 interstitialAd.setListener(object : MaxAdListener {
                     override fun onAdLoaded(ad: MaxAd?) {
@@ -557,7 +581,9 @@ class AppLovinAds {
                 }
                 else {
                     // Commit the transaction
-                    fragmentTransaction.commit()
+                    //fragmentTransaction.commit()
+                    InHouseInterAds.commitFragmentInHouseInterAd(context, activity, appName, packageName,
+                        fragmentTransaction)
                 }
             }
             else {

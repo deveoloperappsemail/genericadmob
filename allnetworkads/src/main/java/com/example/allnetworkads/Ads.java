@@ -72,55 +72,77 @@ public class Ads {
 
     public static void showInterEmpty(Context context, Activity activity) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+
+        String packageName = activity.getPackageName();
+        String appName = activity.getApplicationInfo().loadLabel(activity.getPackageManager()).toString();
+
         if(showAdmob) {
-            //
-            AdmobAds.showInter(activity);
+            AdmobAds.showInter(context, activity, appName, packageName);
         }
         else {
-            AppLovinAds.Companion.showInter(context);
+            AppLovinAds.Companion.showInter(context, activity, appName, packageName);
         }
     }
 
     public static void showInter(Context context, Activity activity, Intent intent,
                                  boolean isFinish) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+
+        String packageName = activity.getPackageName();
+        String appName = activity.getApplicationInfo().loadLabel(activity.getPackageManager()).toString();
+
         if(showAdmob) {
-            AdmobAds.RedirectActivity(activity, intent, isFinish);
+            AdmobAds.RedirectActivity(context, activity, appName, packageName, intent, isFinish);
         }
         else {
-            AppLovinAds.Companion.RedirectActivity(context, activity, intent, isFinish);
+            AppLovinAds.Companion.RedirectActivity(context, activity, appName, packageName, intent, isFinish);
         }
     }
 
     public static void showFragmentInterWithCommit(Context context, Activity activity,
                                                    FragmentTransaction fragmentTransaction) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+
+        String packageName = activity.getPackageName();
+        String appName = activity.getApplicationInfo().loadLabel(activity.getPackageManager()).toString();
+
         if(showAdmob) {
-            AdmobAds.redirectFragmentWithCommit(context, activity, fragmentTransaction);
+            AdmobAds.redirectFragmentWithCommit(context, activity, appName, packageName, fragmentTransaction);
         }
         else {
-            AppLovinAds.Companion.redirectFragmentWithCommit(context, fragmentTransaction);
+            AppLovinAds.Companion.redirectFragmentWithCommit(context, activity, appName, packageName, fragmentTransaction);
         }
     }
 
-    public static void showFragmentInterWithNavController(Context context, Activity activity, int fragmentId,
-                                         View view, Bundle bundle, boolean backStack) {
+    public static void showFragmentInterWithNavController(Context context, Activity activity,
+                                                          int fragmentId, View view,
+                                                          Bundle bundle, boolean backStack) {
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+
+        String packageName = activity.getPackageName();
+        String appName = activity.getApplicationInfo().loadLabel(activity.getPackageManager()).toString();
+
         if(showAdmob) {
-            AdmobAds.redirectFragmentWithNavController(context, activity, fragmentId, view, bundle, backStack);
+            AdmobAds.redirectFragmentWithNavController(context, activity, appName, packageName,
+                    fragmentId, view, bundle, backStack);
         }
         else {
-            AppLovinAds.Companion.redirectFragmentWithNavController(context, activity, fragmentId, view, bundle, backStack);
+            AppLovinAds.Companion.redirectFragmentWithNavController(context, activity, appName, packageName,
+                    fragmentId, view, bundle, backStack);
         }
     }
 
     public static void adOnBack(Context context, Activity activity){
         boolean showAdmob = SharedPrefUtils.getBooleanData(context, Constants.SHOW_ADMOB);
+
+        String packageName = activity.getPackageName();
+        String appName = activity.getApplicationInfo().loadLabel(activity.getPackageManager()).toString();
+
         if(showAdmob) {
-            AdmobAds.adOnBack(context, activity);
+            AdmobAds.adOnBack(context, activity, appName, packageName);
         }
         else {
-            AppLovinAds.Companion.adOnBack(context,activity);
+            AppLovinAds.Companion.adOnBack(context, activity, appName, packageName);
         }
     }
 }

@@ -3,7 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/drawable/close_icon.xml" value="0.1205" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/drawable/customratingstars.xml" value="0.1205" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/drawable/ic_baseline_close_24.xml" value="0.1205" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/drawable/ic_baseline_star_24_empty.xml" value="0.1205" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/drawable/ic_baseline_star_24_filled.xml" value="0.1205" />
         <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/drawable/ic_baseline_star_rate_24.xml" value="0.1205" />
+        <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/drawable/ic_outline_info_24.xml" value="0.1205" />
         <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ad_unified.xml" value="0.1921875" />
         <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ad_unified_black.xml" value="0.1921875" />
         <entry key="..\:/aMaria/AndroidStudioProjects/AllAdsNetworkLibrary/allnetworkads/src/main/res/layout/ad_unified_black_small.xml" value="0.1921875" />

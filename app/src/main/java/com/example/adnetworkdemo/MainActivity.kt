@@ -8,7 +8,6 @@ import android.widget.TextView
 import com.example.allnetworkads.Ads
 import com.example.allnetworkads.admob.ENUMS
 import com.example.allnetworkads.adslib.InHouseAds
-import com.example.allnetworkads.adslib.InHouseInterAds
 import com.example.allnetworkads.adslib.TestAds
 
 class MainActivity : AppCompatActivity() {
@@ -30,22 +29,22 @@ class MainActivity : AppCompatActivity() {
 
         //LiveAds.getLiveAds(this, packageName)
 
+        InHouseAds.getInHouseAds(this, "updatesoftware.checker.online.finder.update")
+
         Ads.loadNative(this, this, null, getString(R.string.ads_lib_app_name), packageName,
-                ENUMS.LARGE_ADS, ENUMS.BLACK, false)
+               ENUMS.LARGE_ADS, ENUMS.BLACK, false)
 
         Ads.loadInter(this, this)
 
         button.setOnClickListener {
             val intent = Intent(this, NextActivity::class.java)
-            //startActivity(intent)
             Ads.showInter(this, this, intent, false)
-           // openFullScreenDialog()
         }
 
         Ads.showActivityBanner(this, this)
-    }
 
-    private fun openFullScreenDialog() {
-        InHouseInterAds.showInHouseInterAd(this)
+
+        //InHouseNativeAds.showInHouseAds(this, this, getString(R.string.ads_lib_app_name),
+          //  packageName,  ENUMS.SMALL_ADS)
     }
 }

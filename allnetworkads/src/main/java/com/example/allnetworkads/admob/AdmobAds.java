@@ -29,6 +29,8 @@ import com.example.allnetworkads.R;
 import com.example.allnetworkads.adslib.AdsClick;
 import com.example.allnetworkads.adslib.Constants;
 import com.example.allnetworkads.adslib.InHouseAds;
+import com.example.allnetworkads.adslib.InHouseInterAds;
+import com.example.allnetworkads.adslib.InHouseNativeAds;
 import com.example.allnetworkads.adslib.SharedPrefUtils;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
@@ -173,8 +175,13 @@ public class AdmobAds {
         }
     }
 
-    public static void adOnBack(Context context, Activity activity){
+    public static void adOnBack(Context context, Activity activity, String appName,
+                                String packageName){
         if (AdsCounter.isShowAd(context)) {
+
+            //JUST FOR TESTING PURPOSE
+           // mInterstitial = null;
+
             if (mInterstitial != null) {
                 mInterstitial.show(activity);
                 mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
@@ -202,16 +209,23 @@ public class AdmobAds {
                     }
                 });
             } else {
-                activity.finish();
+                //activity.finish();
+                InHouseInterAds.Companion.onBackInHouseInterAd(context, activity,
+                        appName, packageName);
             }
         }else {
             activity.finish();
         }
     }
 
-    public static void RedirectActivity(Activity fromActivity, Intent intent, boolean isFinish) {
+    public static void RedirectActivity(Context context, Activity fromActivity, String appName,
+                                        String packageName, Intent intent, boolean isFinish) {
         if (AdsCounter.isShowAd(fromActivity)) {
             Log.i("MyLog", "Show ad");
+
+            //FOR TESTING ONLY - TO REMOVE
+           // mInterstitial = null;
+
             if (mInterstitial != null) {
                 mInterstitial.show(fromActivity);
                 mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
@@ -238,10 +252,13 @@ public class AdmobAds {
                 });
 
             } else {
-                fromActivity.startActivity(intent);
+                /*fromActivity.startActivity(intent);
                 if(isFinish) {
                     fromActivity.finish();
-                }
+                }*/
+
+                InHouseInterAds.Companion.redirectActivityInHouseInterAd(context, fromActivity,
+                        appName, packageName, intent, isFinish);
             }
         } else {
             Log.i("MyLog", "Do not Show ad");
@@ -252,7 +269,8 @@ public class AdmobAds {
         }
     }
 
-    public static void showInter(Activity fromActivity) {
+    public static void showInter(Context context, Activity fromActivity, String appName,
+                                 String packageName) {
         if (AdsCounter.isShowAd(fromActivity)) {
             if (mInterstitial != null) {
                 mInterstitial.show(fromActivity);
@@ -275,9 +293,109 @@ public class AdmobAds {
                     }
                 });
             }
+            else {
+                InHouseInterAds.Companion.emptyInHouseInterAd(context, fromActivity,
+                        appName, packageName);
+            }
         }
     }
 
+    //interstitial ads
+    public static void redirectFragmentWithNavController(Context context, Activity activtiy, String appName,
+                                                         String packageName, int fragmentId, View view,
+                                                         Bundle bundle, boolean backStack){
+        if (AdsCounter.isShowAd(context)) {
+            if (mInterstitial != null) {
+                mInterstitial.show(activtiy);
+                mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                        super.onAdFailedToShowFullScreenContent(adError);
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        super.onAdShowedFullScreenContent();
+                    }
+
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent();
+                        Navigation.findNavController(view).popBackStack(fragmentId, backStack);
+                        Navigation.findNavController(view).navigate(fragmentId, bundle);
+                        loadAdmobInters(context);
+                    }
+
+                    @Override
+                    public void onAdImpression() {
+                        super.onAdImpression();
+                    }
+
+                    @Override
+                    public void onAdClicked() {
+                        super.onAdClicked();
+                    }
+                });
+            } else {
+               /* Navigation.findNavController(view).popBackStack(fragmentId, backStack);
+                Navigation.findNavController(view).navigate(fragmentId, bundle);*/
+
+                InHouseInterAds.Companion.navFragmentInHouseInterAd(context, activtiy, appName, packageName,
+                        view, fragmentId, bundle, backStack);
+            }
+        } else {
+            Navigation.findNavController(view).popBackStack(fragmentId, backStack);
+            Navigation.findNavController(view).navigate(fragmentId, bundle);
+        }
+    }
+
+    public static void redirectFragmentWithCommit(Context context, Activity activtiy, String appName, String packageName,
+                                                  FragmentTransaction fragmentTransaction){
+        if (AdsCounter.isShowAd(context)) {
+            if (mInterstitial != null) {
+                mInterstitial.show(activtiy);
+                mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                        super.onAdFailedToShowFullScreenContent(adError);
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        super.onAdShowedFullScreenContent();
+                    }
+
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent();
+
+                        // Commit the transaction
+                        fragmentTransaction.commit();
+
+                        loadAdmobInters(context);
+                    }
+
+                    @Override
+                    public void onAdImpression() {
+                        super.onAdImpression();
+                    }
+
+                    @Override
+                    public void onAdClicked() {
+                        super.onAdClicked();
+                    }
+                });
+            } else {
+                // Commit the transaction
+               // fragmentTransaction.commit();
+                InHouseInterAds.Companion.commitFragmentInHouseInterAd(context, activtiy, appName,
+                        packageName, fragmentTransaction);
+            }
+        } else {
+            // Commit the transaction
+            fragmentTransaction.commit();
+        }
+    }
 
     /**
      * Creates a request for a new native ad based on the boolean parameters and calls the
@@ -285,7 +403,7 @@ public class AdmobAds {
      */
     @SuppressLint("MissingPermission")
     public static void refreshAd(Context context, Activity activity, String appName,
-                          String pkgName, int isSmallAd, int nativeThemeColor) {
+                                 String pkgName, int isSmallAd, int nativeThemeColor) {
         FrameLayout nativeAds = activity.findViewById(R.id.fl_adplaceholder);
         LinearLayout AdsAreaEmpty = activity.findViewById(R.id.ads_area_empty);
         LinearLayoutCompat inHouseAdArea =  activity.findViewById(R.id.inHouseAd);
@@ -357,7 +475,7 @@ public class AdmobAds {
                                     @Override
                                     public void onAdFailedToLoad(LoadAdError loadAdError) {
                                         if (InHouseAds.getModelAdsList().size() > 0) {
-                                            showInHouseAds(context, activity, appName, pkgName, isSmallAd);
+                                            InHouseNativeAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd);
                                             nativeAds.setVisibility(View.GONE);
                                             AdsAreaEmpty.setVisibility(View.GONE);
                                             inHouseAdArea.setVisibility(View.VISIBLE);
@@ -372,6 +490,100 @@ public class AdmobAds {
 
         adLoader.loadAd(new AdRequest.Builder().build());
 
+    }
+
+    @SuppressLint("MissingPermission")
+    public static void refreshFragmentAd(Context context, Activity activity, View view, String appName,
+                                         String pkgName, int isSmallAd, int nativeThemeColor) {
+        FrameLayout nativeAds =view.findViewById(R.id.fl_adplaceholder);
+        LinearLayout AdsAreaEmpty = view.findViewById(R.id.ads_area_empty);
+        LinearLayoutCompat inHouseAdArea =  view.findViewById(R.id.inHouseAd);
+        String nativeAD = "";
+        try {
+            nativeAD = SharedPrefUtils.getStringData(activity,
+                    Constants.NATIVE_AD);
+            if (nativeAD == null) {
+                nativeAD = "no";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            nativeAD = "";
+        }
+        AdLoader.Builder builder = new AdLoader.Builder(activity, nativeAD);
+
+        builder.forNativeAd(
+                new NativeAd.OnNativeAdLoadedListener() {
+                    // OnLoadedListener implementation.
+                    @Override
+                    public void onNativeAdLoaded(@NonNull NativeAd nativeAd) {
+                        // If this callback occurs after the activity is destroyed, you must call
+                        // destroy and return or you may get a memory leak.
+                        try {
+                            boolean isDestroyed = false;
+
+                            isDestroyed = activity.isDestroyed();
+                            if (isDestroyed || activity.isFinishing() || activity.isChangingConfigurations()) {
+                                nativeAd1.destroy();
+                                return;
+                            }
+                            // You must call destroy on old ads when you are done with them,
+                            // otherwise you will have a memory leak.
+                            if (nativeAd1 != null) {
+                                nativeAd1.destroy();
+                            }
+                            nativeAd1 = nativeAd;
+                            int layout = getNativeLayout(isSmallAd, nativeThemeColor);
+                            NativeAdView adView =
+                                    (NativeAdView) activity.getLayoutInflater().inflate(layout, null);
+                            populateNativeAdView(nativeAd, adView,isSmallAd);
+
+                            nativeAds.removeAllViews();
+                            nativeAds.addView(adView);
+
+                            //correct
+                            nativeAds.setVisibility(View.VISIBLE);
+                            inHouseAdArea.setVisibility(View.GONE);
+                            AdsAreaEmpty.setVisibility(View.GONE);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        VideoOptions videoOptions =
+                new VideoOptions.Builder().setStartMuted(false).build();
+
+        NativeAdOptions adOptions =
+                new NativeAdOptions.Builder().setVideoOptions(videoOptions).build();
+
+        builder.withNativeAdOptions(adOptions);
+
+        AdLoader adLoader =
+                builder
+                        .withAdListener(
+                                new AdListener() {
+                                    @Override
+                                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+
+                                        try {
+                                            if (InHouseAds.getModelAdsList().size() > 0) {
+                                                InHouseNativeAds.showFragmentInHouseAds(context, view, appName, pkgName, isSmallAd);
+                                                nativeAds.setVisibility(View.GONE);
+                                                AdsAreaEmpty.setVisibility(View.GONE);
+                                                inHouseAdArea.setVisibility(View.VISIBLE);
+                                            } else {
+                                                nativeAds.setVisibility(View.GONE);
+                                                inHouseAdArea.setVisibility(View.GONE);
+                                                AdsAreaEmpty.setVisibility(View.VISIBLE);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                })
+                        .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
     }
 
     private static int getNativeLayout(int isSmallAd, int nativeThemeColor) {
@@ -393,166 +605,6 @@ public class AdmobAds {
         }
 
         return layout;
-    }
-
-    public static void showInHouseAds(Context context, Activity activity, String appName,
-                                      String pkgName, int isSmallAd) {
-
-        MaterialTextView adsTitle = activity.findViewById(R.id.adsTitle);
-        MaterialTextView adsSubTitle = activity.findViewById(R.id.adsSubTitle);
-        MaterialTextView adsTitleSmall = activity.findViewById(R.id.adsTitleSmall);
-        MaterialTextView adsRating = activity.findViewById(R.id.adsRating);
-        ImageView icon = activity.findViewById(R.id.iconAds);
-        ImageView featureGraphic = activity.findViewById(R.id.blurImage);
-        Button installBtn = activity.findViewById(R.id.installBtn);
-        VideoView ad_mediaVideo = activity.findViewById(R.id.ad_mediaVideo);
-
-        adsSubTitle.setSelected(true);
-
-        String packageName = "";
-        try {
-            String iconURL = InHouseAds.getModelAdsList().get(0).getAdsIcon();
-            String featureGraphicURL = InHouseAds.getModelAdsList().get(0).getAdsImage();
-            String videoURL = InHouseAds.getModelAdsList().get(0).getAdsVideo();
-            packageName = InHouseAds.getModelAdsList().get(0).getAppPackage();
-            boolean isVideoAvailable = InHouseAds.getModelAdsList().get(0).isVideo();
-
-            adsTitle.setText(   InHouseAds.getModelAdsList().get(0).getAdsTitle()); // title
-            adsSubTitle.setText(InHouseAds.getModelAdsList().get(0).getAdsSubText());
-            adsTitleSmall.setText(InHouseAds.getModelAdsList().get(0).getAdsTitle());
-            adsRating.setText(InHouseAds.getModelAdsList().get(0).getAdsRating());
-
-            Glide.with(context)
-                    .load(iconURL)
-                    .into( icon );
-
-            if (isVideoAvailable) {
-                ad_mediaVideo.setVisibility(View.VISIBLE);
-                featureGraphic.setVisibility(View.GONE);
-
-                Uri video = Uri.parse(videoURL);
-                ad_mediaVideo.setVideoURI(video);
-                ad_mediaVideo.start();
-                ad_mediaVideo.setOnCompletionListener(mediaPlayer -> {
-                    Log.d("TAG", "showInHouseAds: ");
-                    ad_mediaVideo.start();
-                });
-
-            } else {
-                ad_mediaVideo.setVisibility(View.GONE);
-                featureGraphic.setVisibility(View.VISIBLE);
-                Glide.with(context)
-                        .load(featureGraphicURL)
-                        .into( featureGraphic );
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        if(isSmallAd == ENUMS.SMALL_ADS){
-            ad_mediaVideo.setVisibility(View.GONE);
-            featureGraphic.setVisibility(View.GONE);
-        }
-        String finalPackageName = packageName;
-        installBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + finalPackageName)));
-                } catch (Exception e) {
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + finalPackageName)));
-                }
-
-                try {
-                    AdsClick.onAdClick(context, appName, pkgName,finalPackageName, Constants.NATIVE_AD );
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-    }
-
-    public static void showFragmentInHouseAds(Context context, View view, String appName,
-                                              String pkgName, int isSmallAd) {
-
-        MaterialTextView adsTitle = view.findViewById(R.id.adsTitle);
-        MaterialTextView adsSubTitle = view.findViewById(R.id.adsSubTitle);
-        MaterialTextView adsTitleSmall = view.findViewById(R.id.adsTitleSmall);
-        MaterialTextView adsRating = view.findViewById(R.id.adsRating);
-        ImageView icon = view.findViewById(R.id.iconAds);
-        ImageView featureGraphic = view.findViewById(R.id.blurImage);
-        Button installBtn = view.findViewById(R.id.installBtn);
-        VideoView ad_mediaVideo = view.findViewById(R.id.ad_mediaVideo);
-
-        adsSubTitle.setSelected(true);
-
-        String packageName = "";
-        try {
-            String iconURL = InHouseAds.getModelAdsList().get(0).getAdsIcon();
-            String featureGraphicURL = InHouseAds.getModelAdsList().get(0).getAdsImage();
-            String videoURL = InHouseAds.getModelAdsList().get(0).getAdsVideo();
-            packageName = InHouseAds.getModelAdsList().get(0).getAppPackage();
-            boolean isVideoAvailable = InHouseAds.getModelAdsList().get(0).isVideo();
-
-            adsTitle.setText(   InHouseAds.getModelAdsList().get(0).getAdsTitle()); // title
-            adsSubTitle.setText(InHouseAds.getModelAdsList().get(0).getAdsSubText());
-            adsTitleSmall.setText(InHouseAds.getModelAdsList().get(0).getAdsTitle());
-            adsRating.setText(InHouseAds.getModelAdsList().get(0).getAdsRating());
-
-            Glide.with(context)
-                    .load(iconURL)
-                    .into( icon );
-
-            if (isVideoAvailable) {
-                ad_mediaVideo.setVisibility(View.VISIBLE);
-                featureGraphic.setVisibility(View.GONE);
-
-                Uri video = Uri.parse(videoURL);
-                ad_mediaVideo.setVideoURI(video);
-                ad_mediaVideo.start();
-                ad_mediaVideo.setOnCompletionListener(mediaPlayer -> {
-                    Log.d("TAG", "showInHouseAds: ");
-                    ad_mediaVideo.start();
-                });
-
-            } else {
-                ad_mediaVideo.setVisibility(View.GONE);
-                featureGraphic.setVisibility(View.VISIBLE);
-                Glide.with(context)
-                        .load(featureGraphicURL)
-                        .into( featureGraphic );
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        if(isSmallAd == ENUMS.SMALL_ADS){
-            ad_mediaVideo.setVisibility(View.GONE);
-            featureGraphic.setVisibility(View.GONE);
-        }
-        String finalPackageName = packageName;
-        installBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + finalPackageName)));
-                } catch (Exception e) {
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + finalPackageName)));
-                }
-
-                try {
-                    AdsClick.onAdClick(context, appName, pkgName,finalPackageName, Constants.NATIVE_AD );
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
     }
 
     private static void populateNativeAdView(NativeAd nativeAd, NativeAdView adView, int isSmallAd) {
@@ -690,191 +742,6 @@ public class AdmobAds {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    public static void refreshFragmentAd(Context context, Activity activity, View view, String appName,
-                                  String pkgName, int isSmallAd, int nativeThemeColor) {
-        FrameLayout nativeAds =view.findViewById(R.id.fl_adplaceholder);
-        LinearLayout AdsAreaEmpty = view.findViewById(R.id.ads_area_empty);
-        LinearLayoutCompat inHouseAdArea =  view.findViewById(R.id.inHouseAd);
-        String nativeAD = "";
-        try {
-            nativeAD = SharedPrefUtils.getStringData(activity,
-                    Constants.NATIVE_AD);
-            if (nativeAD == null) {
-                nativeAD = "no";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            nativeAD = "";
-        }
-        AdLoader.Builder builder = new AdLoader.Builder(activity, nativeAD);
-
-        builder.forNativeAd(
-                new NativeAd.OnNativeAdLoadedListener() {
-                    // OnLoadedListener implementation.
-                    @Override
-                    public void onNativeAdLoaded(@NonNull NativeAd nativeAd) {
-                        // If this callback occurs after the activity is destroyed, you must call
-                        // destroy and return or you may get a memory leak.
-                        try {
-                            boolean isDestroyed = false;
-
-                            isDestroyed = activity.isDestroyed();
-                            if (isDestroyed || activity.isFinishing() || activity.isChangingConfigurations()) {
-                                nativeAd1.destroy();
-                                return;
-                            }
-                            // You must call destroy on old ads when you are done with them,
-                            // otherwise you will have a memory leak.
-                            if (nativeAd1 != null) {
-                                nativeAd1.destroy();
-                            }
-                            nativeAd1 = nativeAd;
-                            int layout = getNativeLayout(isSmallAd, nativeThemeColor);
-                            NativeAdView adView =
-                                    (NativeAdView) activity.getLayoutInflater().inflate(layout, null);
-                            populateNativeAdView(nativeAd, adView,isSmallAd);
-
-                            nativeAds.removeAllViews();
-                            nativeAds.addView(adView);
-
-                            //correct
-                            nativeAds.setVisibility(View.VISIBLE);
-                            inHouseAdArea.setVisibility(View.GONE);
-                            AdsAreaEmpty.setVisibility(View.GONE);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-        VideoOptions videoOptions =
-                new VideoOptions.Builder().setStartMuted(false).build();
-
-        NativeAdOptions adOptions =
-                new NativeAdOptions.Builder().setVideoOptions(videoOptions).build();
-
-        builder.withNativeAdOptions(adOptions);
-
-        AdLoader adLoader =
-                builder
-                        .withAdListener(
-                                new AdListener() {
-                                    @Override
-                                    public void onAdFailedToLoad(LoadAdError loadAdError) {
-
-                                        try {
-                                            if (InHouseAds.getModelAdsList().size() > 0) {
-                                                showFragmentInHouseAds(context, view, appName, pkgName, isSmallAd);
-                                                nativeAds.setVisibility(View.GONE);
-                                                AdsAreaEmpty.setVisibility(View.GONE);
-                                                inHouseAdArea.setVisibility(View.VISIBLE);
-                                            } else {
-                                                nativeAds.setVisibility(View.GONE);
-                                                inHouseAdArea.setVisibility(View.GONE);
-                                                AdsAreaEmpty.setVisibility(View.VISIBLE);
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                })
-                        .build();
-
-        adLoader.loadAd(new AdRequest.Builder().build());
-    }
-
-    //interstitial ads
-    public static void redirectFragmentWithNavController(Context context, Activity activtiy, int fragmentId,
-                                     View view, Bundle bundle, boolean backStack){
-        if (AdsCounter.isShowAd(context)) {
-            if (mInterstitial != null) {
-                mInterstitial.show(activtiy);
-                mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                        super.onAdFailedToShowFullScreenContent(adError);
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        super.onAdShowedFullScreenContent();
-                    }
-
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        super.onAdDismissedFullScreenContent();
-                        Navigation.findNavController(view).popBackStack(fragmentId, backStack);
-                        Navigation.findNavController(view).navigate(fragmentId, bundle);
-                        loadAdmobInters(context);
-                    }
-
-                    @Override
-                    public void onAdImpression() {
-                        super.onAdImpression();
-                    }
-
-                    @Override
-                    public void onAdClicked() {
-                        super.onAdClicked();
-                    }
-                });
-            } else {
-                Navigation.findNavController(view).popBackStack(fragmentId, backStack);
-                Navigation.findNavController(view).navigate(fragmentId, bundle);
-            }
-        } else {
-            Navigation.findNavController(view).popBackStack(fragmentId, backStack);
-            Navigation.findNavController(view).navigate(fragmentId, bundle);
-        }
-    }
-
-    public static void redirectFragmentWithCommit(Context context, Activity activtiy,
-                                                  FragmentTransaction fragmentTransaction){
-        if (AdsCounter.isShowAd(context)) {
-            if (mInterstitial != null) {
-                mInterstitial.show(activtiy);
-                mInterstitial.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                        super.onAdFailedToShowFullScreenContent(adError);
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        super.onAdShowedFullScreenContent();
-                    }
-
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        super.onAdDismissedFullScreenContent();
-
-                        // Commit the transaction
-                        fragmentTransaction.commit();
-
-                        loadAdmobInters(context);
-                    }
-
-                    @Override
-                    public void onAdImpression() {
-                        super.onAdImpression();
-                    }
-
-                    @Override
-                    public void onAdClicked() {
-                        super.onAdClicked();
-                    }
-                });
-            } else {
-                // Commit the transaction
-                fragmentTransaction.commit();
-            }
-        } else {
-            // Commit the transaction
-            fragmentTransaction.commit();
         }
     }
 }
