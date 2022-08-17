@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/inHouseAd"
+    android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:visibility="gone"
     android:layout_margin="@dimen/_5sdp"
     android:orientation="vertical">
 
@@ -77,20 +78,13 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
-
-
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:orientation="vertical"
-                    android:minHeight="@dimen/_60sdp"
-                    tools:ignore="UselessParent">
-
-
-
-
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:minHeight="@dimen/_60sdp"
+                tools:ignore="UselessParent">
                     <ImageView
                         android:id="@+id/blurImage"
                         android:layout_width="match_parent"
@@ -98,11 +92,10 @@
                         android:contentDescription="@string/ads_lib_app_name"
                         android:padding="@dimen/_5sdp"
                         android:scaleType="fitCenter"
-                        android:adjustViewBounds="true"
-                        />
+                        android:visibility="gone"
+                        android:adjustViewBounds="true" />
 
-
-                    <VideoView
+                   <!-- <VideoView
                         android:id="@+id/ad_mediaVideo"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -110,10 +103,18 @@
                         android:layout_margin="5dp"
                         android:contentDescription="@string/ads_lib_app_name"
                         android:scaleType="fitXY"
-                        android:visibility="gone" />
+                        android:visibility="gone" />-->
+
+                <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                    android:id="@+id/youtube_player_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    app:enableAutomaticInitialization="false"
+                    android:visibility="gone"/>
 
                 </FrameLayout>
-
 
             <LinearLayout
                 android:layout_width="match_parent"

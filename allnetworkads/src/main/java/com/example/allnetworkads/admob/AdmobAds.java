@@ -450,7 +450,7 @@ public class AdmobAds {
                             AdsAreaEmpty.setVisibility(View.GONE);
 
                             //Testing
-                           /* showInHouseAds(context, activity, appName, pkgName, isSmallAd);
+                            /*InHouseNativeAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd);
                             nativeAds.setVisibility(View.GONE);
                             AdsAreaEmpty.setVisibility(View.GONE);
                             inHouseAdArea.setVisibility(View.VISIBLE);*/
