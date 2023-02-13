@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.allnetworkads.Ads
-import com.example.allnetworkads.admob.ENUMS
-import com.example.allnetworkads.adslib.InHouseAds
-import com.example.allnetworkads.adslib.TestAds
+import com.custom.admob.libs.Ads
+import com.custom.admob.libs.admob.ENUMS
+import com.custom.admob.libs.adslib.InHouseAds
+import com.custom.admob.libs.adslib.TestAds
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         //Example of library usage
 
         val button = findViewById<Button>(R.id.button)
+        val buttonload = findViewById<Button>(R.id.buttonload)
         //val adFrame = findViewById<FrameLayout>(R.id.native_ad_layout)
 
         val text = findViewById<TextView>(R.id.title_text_view)
@@ -29,16 +30,20 @@ class MainActivity : AppCompatActivity() {
 
         //LiveAds.getLiveAds(this, packageName)
 
-        InHouseAds.getInHouseAds(this, "updatesoftware.checker.online.finder.update")
+//        InHouseAds.getInHouseAds(this, "updatesoftware.checker.online.finder.update")
 
         Ads.loadNative(this, this, null, getString(R.string.ads_lib_app_name), packageName,
                ENUMS.LARGE_ADS, ENUMS.WHITE, false)
 
-        Ads.loadInter(this, this)
+
 
         button.setOnClickListener {
             val intent = Intent(this, NextActivity::class.java)
             Ads.showInter(this, this, intent, false)
+        }
+
+        buttonload.setOnClickListener {
+            Ads.loadInter(this, this)
         }
 
         Ads.showActivityBanner(this, this)

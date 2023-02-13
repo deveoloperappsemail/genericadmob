@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "AllAdsNetworkLibrary"
+rootProject.name = "CustomAdmob"
 include ':app'
-include ':allnetworkads'
+include ':onlyadmob'
