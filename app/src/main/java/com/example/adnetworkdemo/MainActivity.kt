@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.custom.admob.libs.Ads
 import com.custom.admob.libs.admob.ENUMS
-import com.custom.admob.libs.adslib.InHouseAds
+
 import com.custom.admob.libs.adslib.TestAds
 
 class MainActivity : AppCompatActivity() {
