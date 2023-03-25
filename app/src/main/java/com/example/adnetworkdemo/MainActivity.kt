@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 //        InHouseAds.getInHouseAds(this, "updatesoftware.checker.online.finder.update")
 
         Ads.loadNative(this, this, null, getString(R.string.ads_lib_app_name), packageName,
-               ENUMS.LARGE_ADS, ENUMS.WHITE, false)
+               ENUMS.SMALL_ADS, ENUMS.WHITE, false, R.color.teal_700)
 
 
 

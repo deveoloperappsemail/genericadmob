@@ -21,7 +21,7 @@ import java.util.Date;
 public class AppOpenAdManager {
 
     private static final String LOG_TAG = "AppOpenAdManager";
-    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/3419835294";
+//    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/3419835294";
 
     private AppOpenAd appOpenAd = null;
     private boolean isLoadingAd = false;
@@ -47,9 +47,12 @@ public class AppOpenAdManager {
 
             isLoadingAd = true;
             AdRequest request = new AdRequest.Builder().build();
-            String openAD = "";
+            String openAD;
             try {
                 openAD = SharedPrefUtils.getStringData(context, Constants.OPEN_AD);
+                if(openAD == null){
+                    openAD = "";
+                }
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -67,7 +70,7 @@ public class AppOpenAdManager {
                          * @param ad the loaded app open ad.
                          */
                         @Override
-                        public void onAdLoaded(AppOpenAd ad) {
+                        public void onAdLoaded(@NonNull AppOpenAd ad) {
                             try {
                                 appOpenAd = ad;
                                 isLoadingAd = false;
@@ -86,7 +89,7 @@ public class AppOpenAdManager {
                          * @param loadAdError the error.
                          */
                         @Override
-                        public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                             isLoadingAd = false;
                             Log.d(LOG_TAG, "onAdFailedToLoad: " + loadAdError.getMessage());
                             //                            Toast.makeText(context, "onAdFailedToLoad", Toast.LENGTH_SHORT).show();
@@ -98,10 +101,10 @@ public class AppOpenAdManager {
     }
 
     /** Check if ad was loaded more than n hours ago. */
-    private boolean wasLoadTimeLessThanNHoursAgo(long numHours) {
+    private boolean wasLoadTimeLessThanNHoursAgo() {
         long dateDifference = (new Date()).getTime() - loadTime;
         long numMilliSecondsPerHour = 3600000;
-        return (dateDifference < (numMilliSecondsPerHour * numHours));
+        return (dateDifference < (numMilliSecondsPerHour * (long) 4));
     }
 
     /** Check if ad exists and can be shown. */
@@ -109,7 +112,7 @@ public class AppOpenAdManager {
         // Ad references in the app open beta will time out after four hours, but this time limit
         // may change in future beta versions. For details, see:
         // https://support.google.com/admob/answer/9341964?hl=en
-        return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4);
+        return appOpenAd != null && wasLoadTimeLessThanNHoursAgo();
     }
 
     /**
@@ -120,11 +123,8 @@ public class AppOpenAdManager {
     public void showAdIfAvailable(@NonNull final Activity activity) {
         showAdIfAvailable(
                 activity,
-                new MyApplication.OnShowAdCompleteListener() {
-                    @Override
-                    public void onShowAdComplete() {
-                        // Empty because the user will go back to the activity that shows the ad.
-                    }
+                () -> {
+                    // Empty because the user will go back to the activity that shows the ad.
                 });
     }
 
@@ -171,13 +171,12 @@ public class AppOpenAdManager {
 
                     /** Called when fullscreen content failed to show. */
                     @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                    public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                         appOpenAd = null;
                         isShowingAd = false;
 
                         Log.d(LOG_TAG, "onAdFailedToShowFullScreenContent: " + adError.getMessage());
-//                            Toast.makeText(activity, "onAdFailedToShowFullScreenContent", Toast.LENGTH_SHORT)
-//                                    .show();
+
 
                         onShowAdCompleteListener.onShowAdComplete();
                         loadAd(activity);

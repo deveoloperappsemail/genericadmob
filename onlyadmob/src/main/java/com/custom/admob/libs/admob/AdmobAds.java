@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -15,17 +13,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import com.custom.admob.libs.AdsCounter;
 import com.custom.admob.libs.R;
-import com.custom.admob.libs.adslib.AdsClick;
 import com.custom.admob.libs.adslib.Constants;
 import com.custom.admob.libs.adslib.SharedPrefUtils;
 import com.google.android.gms.ads.AdError;
@@ -45,7 +42,6 @@ import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.gms.ads.nativead.NativeAdOptions;
 import com.google.android.gms.ads.nativead.NativeAdView;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.textview.MaterialTextView;
 
 public class AdmobAds {
 
@@ -69,7 +65,7 @@ public class AdmobAds {
 
     public static void showBanner(Context context,
                                   MaterialCardView adArea, LinearLayout adFrame) {
-        String bannerID = "no";
+        String bannerID;
         try {
             bannerID = SharedPrefUtils.getStringData(context, Constants.BANNER);
             if (bannerID == null) {
@@ -100,7 +96,7 @@ public class AdmobAds {
             }
 
             @Override
-            public void onAdFailedToLoad(LoadAdError adError) {
+            public void onAdFailedToLoad(@NonNull LoadAdError adError) {
                 // Code to be executed when an ad request fails.
                 Log.i("MyLog", "Ad failed: "+adError);
                 adArea.setVisibility(View.VISIBLE);
@@ -137,7 +133,7 @@ public class AdmobAds {
         if (mInterstitial != null ) {
             return;
         }
-         if(!AdsCounter.isABleToLoadInterstitial(context)){
+        if(!AdsCounter.isABleToLoadInterstitial(context)){
             return;
         }
         try {
@@ -181,7 +177,7 @@ public class AdmobAds {
         if (AdsCounter.isShowAd(context)) {
 
             //JUST FOR TESTING PURPOSE
-           // mInterstitial = null;
+            // mInterstitial = null;
 
             if (mInterstitial != null) {
                 mInterstitial.show(activity);
@@ -226,7 +222,7 @@ public class AdmobAds {
             Log.i("MyLog", "Show ad");
 
             //FOR TESTING ONLY - TO REMOVE
-           // mInterstitial = null;
+            // mInterstitial = null;
 
             if (mInterstitial != null) {
                 mInterstitial.show(fromActivity);
@@ -408,9 +404,10 @@ public class AdmobAds {
      */
     @SuppressLint("MissingPermission")
     public static void refreshAd(Context context, Activity activity, String appName,
-                                 String pkgName, int isSmallAd, int nativeThemeColor) {
+                                 String pkgName, int isSmallAd, int nativeThemeColor, int idColor) {
         FrameLayout nativeAds = activity.findViewById(R.id.fl_adplaceholder);
-        /*LinearLayout AdsAreaEmpty = activity.findViewById(R.id.ads_area_empty);
+        LinearLayout AdsAreaEmpty = activity.findViewById(R.id.ads_area_empty);
+        /*
         LinearLayoutCompat inHouseAdArea =  activity.findViewById(R.id.inHouseAd);*/
 
         String nativeAdId = SharedPrefUtils
@@ -445,14 +442,16 @@ public class AdmobAds {
 
                             NativeAdView adView =
                                     (NativeAdView) activity.getLayoutInflater().inflate(layout, null);
-                            populateNativeAdView(nativeAd, adView,isSmallAd);
+                            populateNativeAdView(nativeAd, adView,isSmallAd, context, idColor);
                             nativeAds.removeAllViews();
                             nativeAds.addView(adView);
 
                             //correct
                             nativeAds.setVisibility(View.VISIBLE);
+                            AdsAreaEmpty.setVisibility(View.GONE);
+
                           /*  inHouseAdArea.setVisibility(View.GONE);
-                            AdsAreaEmpty.setVisibility(View.GONE);*/
+                           */
 
                             //Testing
                             /*InHouseNativeAds.showInHouseAds(context, activity, appName, pkgName, isSmallAd);
@@ -485,9 +484,10 @@ public class AdmobAds {
                                             AdsAreaEmpty.setVisibility(View.GONE);
                                             inHouseAdArea.setVisibility(View.VISIBLE);
                                         } else {*/
-                                            nativeAds.setVisibility(View.GONE);
+                                        nativeAds.setVisibility(View.GONE);
+                                        AdsAreaEmpty.setVisibility(View.VISIBLE);
                                            /* inHouseAdArea.setVisibility(View.GONE);
-                                            AdsAreaEmpty.setVisibility(View.VISIBLE);*/
+                                            */
 //                                        }
                                     }
                                 })
@@ -499,9 +499,10 @@ public class AdmobAds {
 
     @SuppressLint("MissingPermission")
     public static void refreshFragmentAd(Context context, Activity activity, View view, String appName,
-                                         String pkgName, int isSmallAd, int nativeThemeColor) {
+                                         String pkgName, int isSmallAd, int nativeThemeColor, int colorBTNId) {
         FrameLayout nativeAds =view.findViewById(R.id.fl_adplaceholder);
-      /*  LinearLayout AdsAreaEmpty = view.findViewById(R.id.ads_area_empty);
+        LinearLayout AdsAreaEmpty = view.findViewById(R.id.ads_area_empty);
+      /*
         LinearLayoutCompat inHouseAdArea =  view.findViewById(R.id.inHouseAd);*/
         String nativeAD = "";
         try {
@@ -540,15 +541,16 @@ public class AdmobAds {
                             int layout = getNativeLayout(isSmallAd, nativeThemeColor);
                             NativeAdView adView =
                                     (NativeAdView) activity.getLayoutInflater().inflate(layout, null);
-                            populateNativeAdView(nativeAd, adView,isSmallAd);
+                            populateNativeAdView(nativeAd, adView,isSmallAd, context, colorBTNId);
 
                             nativeAds.removeAllViews();
                             nativeAds.addView(adView);
 
                             //correct
                             nativeAds.setVisibility(View.VISIBLE);
+                            AdsAreaEmpty.setVisibility(View.GONE);
                           /*  inHouseAdArea.setVisibility(View.GONE);
-                            AdsAreaEmpty.setVisibility(View.GONE);*/
+                          */
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -577,9 +579,10 @@ public class AdmobAds {
 //                                                AdsAreaEmpty.setVisibility(View.GONE);
 //                                                inHouseAdArea.setVisibility(View.VISIBLE);
 //                                            } else {
-                                                nativeAds.setVisibility(View.GONE);
+                                            nativeAds.setVisibility(View.GONE);
+                                            AdsAreaEmpty.setVisibility(View.VISIBLE);
                                               /*  inHouseAdArea.setVisibility(View.GONE);
-                                                AdsAreaEmpty.setVisibility(View.VISIBLE);*/
+                                                */
 //                                            }
                                         } catch (Exception e) {
                                             e.printStackTrace();
@@ -612,7 +615,7 @@ public class AdmobAds {
         return layout;
     }
 
-    private static void populateNativeAdView(NativeAd nativeAd, NativeAdView adView, int isSmallAd) {
+    private static void populateNativeAdView(NativeAd nativeAd, NativeAdView adView, int isSmallAd,Context context, int idColor) {
         // Set the media view.
         try {
 
@@ -622,7 +625,13 @@ public class AdmobAds {
             // Set other ad assets.
             adView.setHeadlineView(adView.findViewById(R.id.ad_headline));
             adView.setBodyView(adView.findViewById(R.id.ad_body));
-            adView.setCallToActionView(adView.findViewById(R.id.ad_call_to_action));
+
+            AppCompatButton acBtn = adView.findViewById(R.id.ad_call_to_action);
+            ViewCompat.setBackgroundTintList(acBtn,
+                    ContextCompat.getColorStateList(context, idColor));
+
+            adView.setCallToActionView(acBtn);
+
             adView.setIconView(adView.findViewById(R.id.ad_app_icon));
             adView.setPriceView(adView.findViewById(R.id.ad_price));
             adView.setStarRatingView(adView.findViewById(R.id.ad_stars));

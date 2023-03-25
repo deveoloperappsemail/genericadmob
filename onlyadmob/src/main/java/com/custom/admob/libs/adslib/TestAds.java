@@ -25,7 +25,7 @@ public class TestAds {
             storeAds(context);
         }
 
-        if (InternetConnection.checkConnection(context)) {
+//        if (InternetConnection.checkConnection(context)) {
             if(showAdmob == ENUMS.ADMOB) {
                 fetchData(context);
                 SharedPrefUtils.saveData(context, Constants.SHOW_ADMOB, true);
@@ -34,7 +34,7 @@ public class TestAds {
                 fetchApplovin(context, packageName);
                 SharedPrefUtils.saveData(context, Constants.SHOW_ADMOB, false);
             }*/
-        }
+//        }
 
 //        InHouseAds.getInHouseAds(context, packageName);
     }
@@ -121,54 +121,4 @@ public class TestAds {
         queue.add(getRequest);
     }
 
-    private static void fetchApplovin(Context context, String packageName) {
-        RequestQueue queue = Volley.newRequestQueue(context); // this = context
-        StringRequest postRequest = new StringRequest(Request.Method.POST,
-                context.getString(R.string.ads_lib_base_url) + "fetchidsbypackage.php",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Log.i("MyLog", "PkgName: "+packageName);
-                        Log.i("MyLog", "Response: "+response);
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                SharedPrefUtils.saveData(context, Constants.APPLOVIN_INTER,
-                                        jsonObject.getString("applovinInter"));
-                                SharedPrefUtils.saveData(context, Constants.APPLOVIN_NATIVE,
-                                        jsonObject.getString("applovinNative"));
-                                SharedPrefUtils.saveData(context, Constants.APPLOVIN_BANNER,
-                                        jsonObject.getString("applovinBanner"));
-                                SharedPrefUtils.saveData(context, Constants.AD_COUNTER,
-                                        jsonObject.getString("intercounter"));
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        try {
-                            Log.d("Response1", "Error.Response" + error.getMessage());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("packagename", packageName);
-
-                return params;
-            }
-        };
-        queue.add(postRequest);
-    }
 }
